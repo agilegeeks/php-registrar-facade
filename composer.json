@@ -31,5 +31,10 @@
         "agilegeeks/php-epp-client": "dev-master",
         "agilegeeks/enom-sdk-php": "dev-master",
         "agilegeeks/whois": "dev-master"
+    },
+    "autoload": {
+	"psr-0": {
+	    "AgileGeeks/RegistrarFacade": "src/"
+        }
     }
 }
