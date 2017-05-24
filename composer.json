@@ -1,0 +1,35 @@
+{
+    "name": "agilegeeks/php-registrar-facade",
+    "type": "library",
+    "description": "A wrapper library around Enom, Eurid and others",
+    "keywords": ["epp","domains","registrar"],
+    "authors": [
+        {
+            "name": "Radu Boncea",
+            "email": "radu.boncea@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/agilegeeks/enom-sdk-php.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/agilegeeks/php-epp-client.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/agilegeeks/php-whois.git"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "require": {
+        "php": ">=5.4",
+        "agilegeeks/php-epp-client": "dev-master",
+        "agilegeeks/enom-sdk-php": "dev-master",
+        "agilegeeks/whois": "dev-master"
+    }
+}
