@@ -34,7 +34,7 @@
     },
     "autoload": {
 	"psr-0": {
-	    "AgileGeeks/RegistrarFacade": "src/"
+	    "AgileGeeks\\RegistrarFacade": "src/"
         }
     }
 }
