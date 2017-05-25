@@ -32,10 +32,4 @@ class BaseTestCase extends PHPUnit\Framework\TestCase {
         return $randomString;
     }
 
-
-    public function test_domain_availability() {
-
-        $this->assertFalse($this->handler->check_availability('google.com'));
-        $this->assertTrue($this->handler->check_availability('domainthatdoesnotexistsandifitdoesbadluck.com'));
-    }
 }

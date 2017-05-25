@@ -4,7 +4,7 @@ require_once(__DIR__.'../../../BaseTestCase.php');
 require_once(__DIR__.'../../DomainHandler.php');
 
 
-class TestDomainAvailability extends BaseTestCase {
+class TestDomainInfo extends BaseTestCase {
 
     protected function setUp($configfile = null) {
         include('config.php');
@@ -15,8 +15,8 @@ class TestDomainAvailability extends BaseTestCase {
 
     }
 
-    public function test_domain_availability() {
-        $this->assertFalse($this->handler->check_availability('google.com'));
-        $this->assertTrue($this->handler->check_availability('domainthatdoesnotexistsandifitdoesbadluck.com'));
+    public function test_domain_info() {
+        //parent::test_domain_info();
+        $this->handler->info('aprilie-05-2.com');
     }
 }
