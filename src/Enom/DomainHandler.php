@@ -39,12 +39,15 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         try {
             $result = $domain->check($sld, $tld);
         } catch (Enom\EnomApiException $e) {
-            throw new ApiException($e->getErrors()->Err1, 0);
+            $this->setError($e->getErrors()->Err1);
+            return False;
         }
         if ($result->RRPCode==210){
-            return True;
+            $this->setResult(True);
+        }else{
+            $this->setResult(False);
         }
-        return False;
+        return True;
     }
 
     public function info($apex_domain){
@@ -55,6 +58,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         } catch (Enom\EnomApiException $e) {
             throw new ApiException($e->getErrors()->Err1, 0);
         }
+        var_dump($result);exit;
         if ($result->RRPCode==210){
             return True;
         }
@@ -94,15 +98,12 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         );
         try {
             $result = $domain->purchase($sld, $tld, $extendedAttributes);
-            var_dump($result);
-            echo "result".$result;
         } catch (Enom\EnomApiException $e) {
-            throw new ApiException($e->getErrors()->Err1, 0);
+            $this->setError($e->getErrors()->Err1);
+            return False;
         }
-        if ($result->RRPCode==210){
-            return True;
-        }
-        return False;
+        return True;
+
     }
 }
 ?>

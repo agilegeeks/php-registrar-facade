@@ -16,7 +16,6 @@ class TestDomainInfo extends BaseTestCase {
     }
 
     public function test_domain_info() {
-        //parent::test_domain_info();
         $this->handler->info('aprilie-05-2.com');
     }
 }

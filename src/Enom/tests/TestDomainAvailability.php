@@ -16,7 +16,11 @@ class TestDomainAvailability extends BaseTestCase {
     }
 
     public function test_domain_availability() {
-        $this->assertFalse($this->handler->check_availability('google.com'));
-        $this->assertTrue($this->handler->check_availability('domainthatdoesnotexistsandifitdoesbadluck.com'));
+        $response = $this->handler->check_availability('google.com');
+        $this->assertTrue($response);
+        $this->assertFalse($this->handler->getResult());
+        $response = $this->handler->check_availability('domainthatdoesnotexistsandifitdoesbadluck.com');
+        $this->assertTrue($response);
+        $this->assertTrue($this->handler->getResult());
     }
 }

@@ -15,32 +15,61 @@ class TestDomainRegistration extends BaseTestCase {
 
     }
 
-    public function test_domain_registration() {
-        //parent::test_domain_availability();
+    public function test_domain_registration_success() {
         $contact_registrant = (object) array(
             'organization_name' => 'Agile Geeks',
-            'first_name' => 'Agile Geeks',
-            'last_name' => 'Agile Geeks',
-            'address1' => 'Agile Geeks',
-            'address2' => 'Agile Geeks',
-            'city' => 'Agile Geeks',
-            'state_province' => 'Agile Geeks',
-            'postal_code' => 'Agile Geeks',
-            'country' => 'Agile Geeks',
-            'email' => 'Agile Geeks',
-            'phone' => 'Agile Geeks',
-            'fax' => 'Agile Geeks'
+            'first_name' => 'Radu',
+            'last_name' => 'Boncea',
+            'address1' => 'Agile Geeks Street',
+            'address2' => '',
+            'city' => 'Bucuresti',
+            'state_province' => '',
+            'postal_code' => '',
+            'country' => 'Romania',
+            'email' => 'radu.boncea@gmail.com',
+            'phone' => '0040754074401',
+            'fax' => ''
+        );
+        $apex_domain = $this->randomstring(60).'.com';
+        $result = $this->handler->register($apex_domain,
+                                $registration_period=1,
+                                $nameservers=array(),
+                                $domain_password='d786dfhh48f',
+                                $contact_registrant=$contact_registrant,
+                                $contact_tech=null,
+                                $contact_admin=null,
+                                $contact_billing=null,
+                                $extra_params=array()
+                            );
+        $this->assertTrue($result);
+    }
+
+    public function test_domain_registration_failure() {
+        $contact_registrant = (object) array(
+            'organization_name' => 'Agile Geeks',
+            'first_name' => 'Radu',
+            'last_name' => 'Boncea',
+            'address1' => 'Agile Geeks Street',
+            'address2' => '',
+            'city' => 'Bucuresti',
+            'state_province' => '',
+            'postal_code' => '',
+            'country' => 'Romania',
+            'email' => 'radu.boncea',
+            'phone' => '0040754074401',
+            'fax' => ''
         );
 
-        $this->handler->register('rotld.com',
-                            $registration_period=1,
-                            $nameservers=array(),
-                            $domain_password='d786dfhh48f',
-                            $contact_registrant=$contact_registrant,
-                            $contact_tech=null,
-                            $contact_admin=null,
-                            $contact_billing=null,
-                            $extra_params=array()
+        $this->handler->register('domainfortesting-1.com',
+                                $registration_period=1,
+                                $nameservers=array(),
+                                $domain_password='d786dfhh48f',
+                                $contact_registrant=$contact_registrant,
+                                $contact_tech=null,
+                                $contact_admin=null,
+                                $contact_billing=null,
+                                $extra_params=array()
                             );
+        $this->assertSame($this->handler->getError(),'Domain name not available');
     }
 }
