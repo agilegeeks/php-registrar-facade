@@ -3,8 +3,11 @@ namespace AgileGeeks\RegistrarFacade\Enom;
 
 use \Coreproc\Enom as Enom;
 use \AgileGeeks\RegistrarFacade\ApiException as ApiException;
+use \AgileGeeks\RegistrarFacade\Models as Models;
+use \AgileGeeks\RegistrarFacade\Helpers as Helpers;
 
 require_once(__DIR__ . '../../helpers.php');
+require_once(__DIR__ . '../../models.php');
 require_once(__DIR__ . '../../DomainHandlerInterface.php');
 require_once(__DIR__ . '../../BaseHandler.php');
 require_once(__DIR__ . '../../ApiException.php');
@@ -14,6 +17,15 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                     implements \AgileGeeks\RegistrarFacade\DomainHandlerInterface {
     protected $enom = null;
     protected $domain = null;
+
+    private function format_enom_error_message($e){
+        $errors = get_object_vars($e->getErrors());
+        $error_message = '';
+        foreach ($errors as $key => $val) {
+            $error_message .= $val." ";
+        }
+        $this->setError(trim($error_message));
+    }
 
     public function __construct($config){
         parent::__construct($config);
@@ -34,12 +46,12 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
     }
 
     public function check_availability($apex_domain){
-        list($sld,$tld) = apex_split($apex_domain);
+        list($sld,$tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         try {
             $result = $domain->check($sld, $tld);
         } catch (Enom\EnomApiException $e) {
-            $this->setError($e->getErrors()->Err1);
+            $this->format_enom_error_message($e);
             return False;
         }
         if ($result->RRPCode==210){
@@ -51,18 +63,24 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
     }
 
     public function info($apex_domain){
-        list($sld,$tld) = apex_split($apex_domain);
+        list($sld,$tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         try {
             $result = $domain->getInfo($sld, $tld);
         } catch (Enom\EnomApiException $e) {
-            throw new ApiException($e->getErrors()->Err1, 0);
+            $this->format_enom_error_message($e);
+            return False;
         }
-        var_dump($result);exit;
-        if ($result->RRPCode==210){
-            return True;
-        }
-        return False;
+
+        var_dump($result->GetDomainInfo);
+        $domain_name = new Models\DomainNameModel();
+        $domain_name->domain_name = $result->GetDomainInfo->domainname;
+        $domain_name->expiration_date = strtotime($result->GetDomainInfo->status->expiration);
+        $domain_name->deletion_date = strtotime($result->GetDomainInfo->status->deletebydate);
+        $domain_name->registrar = $result->GetDomainInfo->status->registrar;
+        var_dump($domain_name);
+        $this->setResult($domain_name);
+        return True;
     }
 
     public function register($apex_domain,
@@ -75,7 +93,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                         $contact_billing=null,
                         $extra_params=array()
                     ){
-        list($sld,$tld) = apex_split($apex_domain);
+        list($sld,$tld) = Helpers\apex_split($apex_domain);
 
         $domain = $this->getDomainInstance();
         $extendedAttributes = array(
@@ -99,7 +117,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         try {
             $result = $domain->purchase($sld, $tld, $extendedAttributes);
         } catch (Enom\EnomApiException $e) {
-            $this->setError($e->getErrors()->Err1);
+            $this->format_enom_error_message($e);
             return False;
         }
         return True;
