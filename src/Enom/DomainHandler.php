@@ -62,7 +62,14 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
-    public function info($apex_domain){
+    public function info($apex_domain, $include_contacts=True){
+        $contact_type_mapping = array(
+            'Administrative'=>'contact_admin',
+            'Technical'=>'contact_tech',
+            'Registrant'=>'contact_registrant',
+            'Billing'=>'contact_billing'
+        );
+
         list($sld,$tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         try {
@@ -72,13 +79,40 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             return False;
         }
 
-        var_dump($result->GetDomainInfo);
         $domain_name = new Models\DomainNameModel();
         $domain_name->domain_name = $result->GetDomainInfo->domainname;
         $domain_name->expiration_date = strtotime($result->GetDomainInfo->status->expiration);
         $domain_name->deletion_date = strtotime($result->GetDomainInfo->status->deletebydate);
         $domain_name->registrar = $result->GetDomainInfo->status->registrar;
-        var_dump($domain_name);
+
+        //get contacts info
+        if($include_contacts===True){
+            try {
+                $result = $domain->getWhoIsContactInformation($sld, $tld);
+            } catch (Enom\EnomApiException $e) {
+                $this->format_enom_error_message($e);
+                return False;
+            }
+            $domain_contacts = $result->GetWhoisContacts->contacts->contact;
+            foreach ($domain_contacts as $domain_contact) {
+                $contact = new Models\ContactModel();
+                $contact->organization_name = Helpers\object_to_empty_string($domain_contact->Organization);
+                $contact->first_name = Helpers\object_to_empty_string($domain_contact->FName);
+                $contact->last_name = Helpers\object_to_empty_string($domain_contact->LName);
+                $contact->address1 = Helpers\object_to_empty_string($domain_contact->Address1);
+                $contact->address2 = Helpers\object_to_empty_string($domain_contact->Address2);
+                $contact->city = Helpers\object_to_empty_string($domain_contact->City);
+                $contact->state_province = Helpers\object_to_empty_string($domain_contact->StateProvince);
+                $contact->postal_code = Helpers\object_to_empty_string($domain_contact->PostalCode);
+                $contact->country = Helpers\object_to_empty_string($domain_contact->Country);
+                $contact->phone = Helpers\object_to_empty_string($domain_contact->Phone);
+                $contact->fax = Helpers\object_to_empty_string($domain_contact->Fax);
+                $contact->email = Helpers\object_to_empty_string($domain_contact->EmailAddress);
+                $domain_name->{$contact_type_mapping[$domain_contact->{'@attributes'}->ContactType]} = $contact;
+            }
+        }
+        //finished getting contacts info
+
         $this->setResult($domain_name);
         return True;
     }
