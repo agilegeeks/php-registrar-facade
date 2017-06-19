@@ -33,7 +33,7 @@ class TestDomainRegistration extends BaseTestCase {
         $apex_domain = $this->randomstring(60).'.com';
         $result = $this->handler->register($apex_domain,
                                 $registration_period=1,
-                                $nameservers=array(),
+                                $nameservers=array('ns1.raduboncea.ro','ns2.raduboncea.ro'),
                                 $domain_password='d786dfhh48f',
                                 $contact_registrant=$contact_registrant,
                                 $contact_tech=null,

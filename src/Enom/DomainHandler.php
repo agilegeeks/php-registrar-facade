@@ -148,6 +148,14 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             'IgnoreNSFail'=>'Yes',
 
         );
+
+        for ($i=0; $i <sizeof($nameservers) ; $i++) {
+            if (array_key_exists($i, $nameservers)){
+                $key = $i+1;
+                $extendedAttributes['NS'.$key] = $nameservers[$i];
+            }
+        }
+
         try {
             $result = $domain->purchase($sld, $tld, $extendedAttributes);
         } catch (Enom\EnomApiException $e) {
