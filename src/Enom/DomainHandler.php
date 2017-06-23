@@ -62,7 +62,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
-    public function info($apex_domain, $include_contacts=True){
+    public function info($apex_domain, $include_contacts=True, $include_namservers=True){
         $contact_type_mapping = array(
             'Administrative'=>'contact_admin',
             'Technical'=>'contact_tech',
@@ -112,6 +112,22 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             }
         }
         //finished getting contacts info
+
+
+        //get nameservers info
+        if($include_namservers===True){
+            try {
+                $result = $domain->getNSInformation($sld, $tld);
+            } catch (Enom\EnomApiException $e) {
+                $this->format_enom_error_message($e);
+                return False;
+            }
+            foreach ($result->dns as $ns) {
+                $domain_name->nameservers[] = $ns;
+            }
+        }
+        //finished getting nameservers info
+
 
         $this->setResult($domain_name);
         return True;

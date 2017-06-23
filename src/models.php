@@ -12,6 +12,7 @@ class DomainNameModel
     public $contact_tech = null;
     public $contact_admin = null;
     public $contact_billing = null;
+    public $nameservers = array();
 }
 
 
