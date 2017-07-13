@@ -183,5 +183,24 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
 
     }
+
+    public function update_nameservers($apex_domain, $nameservers=array()){
+        list($sld,$tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+        $extendedAttributes = array();
+        for ($i=0; $i <sizeof($nameservers) ; $i++) {
+            if (array_key_exists($i, $nameservers)){
+                $key = $i+1;
+                $extendedAttributes['NS'.$key] = $nameservers[$i];
+            }
+        }
+        try {
+            $result = $domain->ModifyNameservers($sld, $tld, $extendedAttributes);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+        return True;
+    }
 }
 ?>

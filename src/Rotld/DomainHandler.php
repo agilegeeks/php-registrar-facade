@@ -175,5 +175,14 @@ class DomainHandler extends BaseHandler
 
     }
 
+    public function update_nameservers($apex_domain, $nameservers=array()){
+        $result = $this->client->reset_nameservers($apex_domain, $nameservers);
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        return True;
+    }
+
 }
 ?>

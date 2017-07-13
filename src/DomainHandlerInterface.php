@@ -14,5 +14,6 @@ interface DomainHandlerInterface
                         $contact_admin,
                         $contact_billing,
                         $extra_params);
+    public function update_nameservers($apex_domain,$nameservers);
 }
 ?>
