@@ -20,6 +20,10 @@
         },
         {
             "type": "vcs",
+            "url":  "https://github.com/agilegeeks/rotld-sdk-php.git"
+        },
+        {
+            "type": "vcs",
             "url":  "https://github.com/agilegeeks/php-whois.git"
         }
     ],
@@ -30,11 +34,13 @@
         "php": ">=5.4",
         "agilegeeks/php-epp-client": "dev-master",
         "agilegeeks/enom-sdk-php": "dev-master",
+        "agilegeeks/rotld-sdk-php": "dev-master",
         "agilegeeks/whois": "dev-master"
     },
     "autoload": {
 	   "psr-4": {
-	       "AgileGeeks\\RegistrarFacade\\": "src"
+	       "AgileGeeks\\RegistrarFacade\\": "src",
+           "AgileGeeks\\Rotld\\": "src"
         }
     }
 }
