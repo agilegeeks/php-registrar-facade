@@ -1,5 +1,5 @@
 <?php
-use AgileGeeks\RegistrarFacade\Enom as Api;
+use AgileGeeks\RegistrarFacade\Rotld as Api;
 require_once(__DIR__.'../../../BaseTestCase.php');
 require_once(__DIR__.'../../DomainHandler.php');
 
@@ -13,38 +13,39 @@ class TestDomainInfo extends BaseTestCase {
     protected function setUp($configfile = null) {
         include('config.php');
         $this->handler = new Api\DomainHandler($config);
-        $this->test_apex_domain = 'jump-test-domain.com';
+        $this->test_apex_domain = 'rotld.ro';
 
 
         $this->contact_registrant = (object) array(
-            'organization_name' => 'Agile Geeks',
-            'first_name' => 'Radu',
-            'last_name' => 'Boncea',
+            'person_type' => 'p',
+            'cnp_fiscal_code' => '1876972634324',
+            'registration_number' => '',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
             'address1' => 'Agile Geeks Street',
-            'address2' => '',
+            'address2' => 'Line 2',
+            'address3' => 'Line 3',
             'city' => 'Bucuresti',
-            'state_province' => '',
+            'state_province' => 'Bucuresti',
             'postal_code' => '',
             'country' => 'RO',
-            'email' => 'radu.boncea@gmail.com',
-            'phone' => '0040754074401',
+            'email' => 'johndoe@gmail.com',
+            'phone' => '+40.1222227',
             'fax' => ''
         );
 
-        return;
 
-        $this->test_apex_domain = $this->randomstring(60).'.com';
+        $this->test_apex_domain = $this->randomstring(60).'.ro';
         $result = $this->handler->register($this->test_apex_domain,
-                                $registration_period=5,
-                                $nameservers=array(),
-                                $domain_password=$this->randomstring(16),
+                                $registration_period=1,
+                                $nameservers=array('ns1.x.com','ns2.x.com'),
+                                $domain_password='G0odPasswd21$',
                                 $contact_registrant=$this->contact_registrant,
                                 $contact_tech=null,
                                 $contact_admin=null,
                                 $contact_billing=null,
                                 $extra_params=array()
                             );
-        sleep(2);
     }
 
     protected function tearDown() {
@@ -52,18 +53,19 @@ class TestDomainInfo extends BaseTestCase {
     }
 
     public function test_domain_info() {
-        $this->assertFalse($this->handler->info('domainthatdoesnotexistsandifitdoesbadluck.com'));
+        $this->assertFalse($this->handler->info('domainthatdoesnotexistsandifitdoesbadluck.ro'));
+        $this->assertSame($this->handler->getError(),"DOMAIN NOT FOUND");
 
         $response = $this->handler->info($this->test_apex_domain, $include_contacts=True);
         $this->assertTrue($response);
-
         $result = $this->handler->getResult();
         $this->assertSame($result->domain_name, $this->test_apex_domain);
-        $this->assertSame(strtolower($result->contact_registrant->organization_name), strtolower($this->contact_registrant->organization_name));
+        $this->assertSame(strtolower($result->contact_registrant->organization_name), '');
         $this->assertSame(strtolower($result->contact_registrant->first_name), strtolower($this->contact_registrant->first_name));
         $this->assertSame(strtolower($result->contact_registrant->last_name), strtolower($this->contact_registrant->last_name));
         $this->assertSame(strtolower($result->contact_registrant->address1), strtolower($this->contact_registrant->address1));
         $this->assertSame(strtolower($result->contact_registrant->address2), strtolower($this->contact_registrant->address2));
+        $this->assertSame(strtolower($result->contact_registrant->address3), strtolower($this->contact_registrant->address3));
         $this->assertSame(strtolower($result->contact_registrant->city), strtolower($this->contact_registrant->city));
         $this->assertSame(strtolower($result->contact_registrant->state_province), strtolower($this->contact_registrant->state_province));
         $this->assertSame(strtolower($result->contact_registrant->postal_code), strtolower($this->contact_registrant->postal_code));
@@ -88,6 +90,6 @@ class TestDomainInfo extends BaseTestCase {
             $this->test_apex_domain, $include_contacts=False, $include_namservers=True
         );
         $result = $this->handler->getResult();
-        $this->assertEquals(5, sizeof($result->nameservers));
+        $this->assertEquals(2, sizeof($result->nameservers));
     }
 }
