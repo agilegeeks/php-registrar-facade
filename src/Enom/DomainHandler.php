@@ -202,5 +202,22 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
         return True;
     }
+
+    public function renew($apex_domain, $period=1){
+        list($sld,$tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+        $period = intval($period);
+        if($period<1 || $period>10){
+            $this->setError('Invalid period');
+            return False;
+        }
+        try {
+            $result = $domain->extend($sld, $tld, $period);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+        return True;
+    }
 }
 ?>

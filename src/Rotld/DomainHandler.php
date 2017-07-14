@@ -184,5 +184,19 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function renew($apex_domain, $period=1){
+        $period = intval($period);
+        if($period<1 || $period>10){
+            $this->setError('Invalid period');
+            return False;
+        }
+        $result = $this->client->renew_domain($apex_domain, $period);
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        return True;
+    }
+
 }
 ?>
