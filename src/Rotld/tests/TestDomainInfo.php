@@ -59,6 +59,7 @@ class TestDomainInfo extends BaseTestCase {
         $response = $this->handler->info($this->test_apex_domain, $include_contacts=True);
         $this->assertTrue($response);
         $result = $this->handler->getResult();
+        var_dump($result);
         $this->assertSame($result->domain_name, $this->test_apex_domain);
         $this->assertSame(strtolower($result->contact_registrant->organization_name), '');
         $this->assertSame(strtolower($result->contact_registrant->first_name), strtolower($this->contact_registrant->first_name));

@@ -16,7 +16,7 @@
         },
         {
             "type": "vcs",
-            "url":  "https://github.com/agilegeeks/php-epp-client.git"
+            "url":  "https://github.com/agilegeeks/eurid-epp-php.git"
         },
         {
             "type": "vcs",
@@ -32,7 +32,7 @@
     },
     "require": {
         "php": ">=5.4",
-        "agilegeeks/php-epp-client": "dev-master",
+        "agilegeeks/eurid-epp-php": "dev-master",
         "agilegeeks/enom-sdk-php": "dev-master",
         "agilegeeks/rotld-sdk-php": "dev-master",
         "agilegeeks/whois": "dev-master"
@@ -40,7 +40,8 @@
     "autoload": {
 	   "psr-4": {
 	       "AgileGeeks\\RegistrarFacade\\": "src",
-           "AgileGeeks\\Rotld\\": "src"
+           "AgileGeeks\\Rotld\\": "src",
+           "AgileGeeks\\EPP\\Eurid\\": "src"
         }
     }
 }
