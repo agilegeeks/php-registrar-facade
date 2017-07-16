@@ -147,12 +147,21 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        $result = $this->client->register_domain(
-            $domain_name = $apex_domain,
-            $domain_period = $registration_period,
-            $registrant_cid = $cid,
-            $domain_password =  $domain_password
-        );
+        if (isset($extra_params['reservation']) && $extra_params['reservationre']==true){
+            $result = $this->client->reserve_domain(
+                $domain_name = $apex_domain,
+                $domain_period = $registration_period,
+                $registrant_cid = $cid,
+                $domain_password =  $domain_password
+            );
+        }else{
+            $result = $this->client->register_domain(
+                $domain_name = $apex_domain,
+                $domain_period = $registration_period,
+                $registrant_cid = $cid,
+                $domain_password =  $domain_password
+            );
+        }
 
         if (!$result){
             $this->setError($this->client->getResultMessage());
