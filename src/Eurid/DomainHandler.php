@@ -1,8 +1,8 @@
 <?php
 namespace AgileGeeks\RegistrarFacade\Eurid;
 
-use AgileGeeks\EPP\Eurid\Eurid_Client;
-use AgileGeeks\EPP\Eurid\Eurid_Exception;
+use AgileGeeks\EPP\Eurid\Client;
+use AgileGeeks\EPP\Eurid\Exception;
 use AgileGeeks\RegistrarFacade\BaseHandler;
 use AgileGeeks\RegistrarFacade\DomainHandlerInterface;
 use AgileGeeks\RegistrarFacade\ApiException;
@@ -13,8 +13,6 @@ use AgileGeeks\RegistrarFacade\Helpers;
 require_once(__DIR__ . '../../helpers.php');
 require_once(__DIR__ . '/models.php');
 
-require_once('../../../vendor/agilegeeks/eurid-epp-php/src/Eurid/Client.php');
-require_once('../../../vendor/agilegeeks/eurid-epp-php/src/Eurid/Exception.php');
 
 
 class DomainHandler extends BaseHandler
@@ -28,7 +26,7 @@ class DomainHandler extends BaseHandler
 
     public function __construct($config){
         parent::__construct($config);
-        $this->client = new Eurid_Client(
+        $this->client = new Client(
                                     $host=$config['host'],
                                     $user=$config['user'],
                                     $pass=$config['pass'],
@@ -300,4 +298,5 @@ class DomainHandler extends BaseHandler
     }
 
 }
+
 ?>
