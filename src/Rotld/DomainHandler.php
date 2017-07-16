@@ -147,7 +147,12 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        if (isset($extra_params['reservation']) && $extra_params['reservationre']==true){
+        $reservation = false;
+        if (isset($extra_params['reservation']) && $extra_params['reservation']==true){
+            $reservation = true;
+        }
+
+        if ($reservation){
             $result = $this->client->reserve_domain(
                 $domain_name = $apex_domain,
                 $domain_period = $registration_period,
@@ -168,7 +173,7 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        if (sizeof($nameservers)>0){
+        if (sizeof($nameservers)>0 && !$reservation){
             $result = $this->client->reset_nameservers(
                 $domain_name = $apex_domain,
                 $nameservers = $nameservers

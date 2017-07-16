@@ -80,7 +80,7 @@ class TestDomainRegistration extends BaseTestCase {
                                 $extra_params=array('reservation'=>true)
                             );
 
-        //echo $this->handler->getError();
+        echo $this->handler->getError();
         $this->assertTrue($result);
 
     }
