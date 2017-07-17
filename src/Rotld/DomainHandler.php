@@ -212,5 +212,14 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function activate($apex_domain){
+        $result = $this->client->activate_domain($apex_domain);
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        return True;
+    }
+
 }
 ?>

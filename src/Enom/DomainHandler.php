@@ -249,5 +249,9 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
         return True;
     }
+
+    public function activate($apex_domain){
+        return True;
+    }
 }
 ?>

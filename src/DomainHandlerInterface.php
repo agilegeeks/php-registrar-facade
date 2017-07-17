@@ -15,6 +15,7 @@ interface DomainHandlerInterface
                         $contact_billing,
                         $extra_params);
     public function update_nameservers($apex_domain,$nameservers);
+    public function activate($apex_domain);
     public function renew($apex_domain,$period);
 }
 ?>

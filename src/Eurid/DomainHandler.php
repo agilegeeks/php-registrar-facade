@@ -331,4 +331,8 @@ class DomainHandler extends BaseHandler
 
     }
 
+    public function activate($apex_domain){
+        return True;
+    }
+
 }
