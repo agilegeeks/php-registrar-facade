@@ -123,6 +123,7 @@ class DomainHandler extends BaseHandler
                 $contact_type = $contact_type_mapping[$ctype];
 
                 $contact = new Models\EuridContactModel();
+
                 list($contact->first_name, $contact->last_name) = Helpers\object_to_empty_string(explode(" ", $contact_data->name, 2));
                 $contact->organization_name = Helpers\object_to_empty_string($contact_data->org);
                 $i=1;
@@ -261,11 +262,17 @@ class DomainHandler extends BaseHandler
             $norm_nameservers = array();
             if (sizeof($nameservers)>0){
                 foreach ($nameservers as $ns) {
+                    if ($ns == null) {
+                        continue;
+                    }
+
                     $ip = null;
+                    
                     if(is_array($ns)){
                         $ip = $ns[1];
                         $ns = $ns[0];
                     }
+                    
                     $norm_nameservers[]=array($ns,$ip);
                 }
             }
