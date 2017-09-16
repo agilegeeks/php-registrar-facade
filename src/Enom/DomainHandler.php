@@ -64,10 +64,10 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
     public function info($apex_domain, $include_contacts=True, $include_namservers=True){
         $contact_type_mapping = array(
-            'Administrative'=>'contact_admin',
-            'Technical'=>'contact_tech',
-            'Registrant'=>'contact_registrant',
-            'Billing'=>'contact_billing'
+            'admin'=>'contact_admin',
+            'tech'=>'contact_tech',
+            'registrant'=>'contact_registrant',
+            'billing'=>'contact_billing'
         );
 
         list($sld,$tld) = Helpers\apex_split($apex_domain);
@@ -88,17 +88,17 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         //get contacts info
         if($include_contacts===True){
             try {
-                $result = $domain->getWhoIsContactInformation($sld, $tld);
+                $result = $domain->getContactInformation($sld, $tld);
             } catch (Enom\EnomApiException $e) {
                 $this->format_enom_error_message($e);
                 return False;
             }
-            $domain_contacts = $result->GetWhoisContacts->contacts->contact;
-            foreach ($domain_contacts as $domain_contact) {
+            
+            foreach ($result as $contact_type => $domain_contact) {
                 $contact = new Models\ContactModel();
-                $contact->organization_name = Helpers\object_to_empty_string($domain_contact->Organization);
-                $contact->first_name = Helpers\object_to_empty_string($domain_contact->FName);
-                $contact->last_name = Helpers\object_to_empty_string($domain_contact->LName);
+                $contact->organization_name = Helpers\object_to_empty_string($domain_contact->OrganizationName);
+                $contact->first_name = Helpers\object_to_empty_string($domain_contact->FirstName);
+                $contact->last_name = Helpers\object_to_empty_string($domain_contact->LastName);
                 $contact->address1 = Helpers\object_to_empty_string($domain_contact->Address1);
                 $contact->address2 = Helpers\object_to_empty_string($domain_contact->Address2);
                 $contact->city = Helpers\object_to_empty_string($domain_contact->City);
@@ -108,7 +108,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                 $contact->phone = Helpers\object_to_empty_string($domain_contact->Phone);
                 $contact->fax = Helpers\object_to_empty_string($domain_contact->Fax);
                 $contact->email = Helpers\object_to_empty_string($domain_contact->EmailAddress);
-                $domain_name->{$contact_type_mapping[$domain_contact->{'@attributes'}->ContactType]} = $contact;
+                $domain_name->{$contact_type_mapping[$contact_type]} = $contact;
             }
         }
         //finished getting contacts info
