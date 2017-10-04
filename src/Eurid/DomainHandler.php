@@ -296,8 +296,36 @@ class DomainHandler extends BaseHandler
 
     }
 
-    public function update_nameservers($apex_domain, $nameservers=array()){
+    public function update_nameservers($apex_domain, $nameservers = array()) {
+        $this->login();
+        
+        // Domain info to get current nameservers
+        try {
+            $domain_data = $this->client->domainInfo($apex_domain);
+        } catch (Eurid_Exception $e) {
+            $this->format_eurid_error_message($e);
+            return False;
+        }
 
+        $ns = array_keys($domain_data->nameservers);
+        $ns_to_add = array_diff($nameservers, $ns);
+        $ns_to_remove = array_diff($ns, $nameservers);
+
+        if (empty($ns_to_add) && empty($ns_to_remove)) {
+            return True;
+        }
+
+        // Update domain nameservers
+        try {
+            $domain_data = $this->client->updateNameservers($apex_domain, $ns_to_add, $ns_to_remove);
+        } catch (Eurid_Exception $e) {
+            $this->format_eurid_error_message($e);
+            return False;
+        }
+
+        $this->logout();
+
+        return True;
     }
 
     public function renew($apex_domain, $period=1){
@@ -305,5 +333,3 @@ class DomainHandler extends BaseHandler
     }
 
 }
-
-?>
