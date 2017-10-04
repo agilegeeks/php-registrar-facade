@@ -307,9 +307,8 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        $ns = array_keys($domain_data->nameservers);
-        $ns_to_add = array_diff($nameservers, $ns);
-        $ns_to_remove = array_diff($ns, $nameservers);
+        $ns_to_add = array_diff($nameservers, $domain_data->nameservers);
+        $ns_to_remove = array_diff($domain_data->nameservers, $nameservers);
 
         if (empty($ns_to_add) && empty($ns_to_remove)) {
             return True;
