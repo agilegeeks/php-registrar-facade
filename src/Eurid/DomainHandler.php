@@ -2,7 +2,7 @@
 namespace AgileGeeks\RegistrarFacade\Eurid;
 
 use AgileGeeks\EPP\Eurid\Client;
-use AgileGeeks\EPP\Eurid\Exception;
+use AgileGeeks\EPP\Eurid\Eurid_Exception;
 use AgileGeeks\RegistrarFacade\BaseHandler;
 use AgileGeeks\RegistrarFacade\DomainHandlerInterface;
 use AgileGeeks\RegistrarFacade\ApiException;
