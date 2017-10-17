@@ -184,6 +184,33 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
     }
 
+    public function purchase_service($apex_domain, $service, $period = 1)
+    {
+        // Only ID Protect supported, for now
+        $supported_services = array('WPPS');
+
+        if (!in_array($service, $supported_services)) {
+            $this->setError('Invalid service');
+            return False;
+        }
+
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+        $extendedAttributes = array(
+            'Service' => $service,
+            'NumYears' => $period,            
+        );
+
+        try {
+            $result = $domain->purchaseService($sld, $tld, $extendedAttributes);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
+
     public function update_nameservers($apex_domain, $nameservers=array()){
         list($sld,$tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
