@@ -33,7 +33,10 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
     public function getEnomInstance(){
         if ($this->enom==null){
-            $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url']);
+            if (!isset($this->config['verify_ssl'])){
+                $this->config['verify_ssl'] = false;
+            }
+            $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url'], $this->config['verify_ssl']);
         }
         return $this->enom;
     }
