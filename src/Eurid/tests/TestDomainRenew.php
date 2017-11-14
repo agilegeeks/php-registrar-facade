@@ -59,6 +59,7 @@ class TestDomainInfo extends BaseTestCase {
     }
 
     public function test_domain_renew() {
+        echo ($this->test_apex_domain);
         $period = 1;
         $response = $this->handler->renew($this->test_apex_domain, $period);
         $this->assertTrue($response);
@@ -69,7 +70,9 @@ class TestDomainInfo extends BaseTestCase {
         $this->assertTrue($response);
         $result = $this->handler->getResult();
         $this->assertTrue(strtotime($result->expiration_date) > (time()+31536000));
+        $this->assertTrue(strtotime($result->deletion_date) > (time()+31536000));
         $this->assertTrue(strtotime($result->expiration_date) < (time()+3*31536000));
+        $this->assertTrue(strtotime($result->deletion_date) < (time()+3*31536000));
 
         $period = 8;
         $response = $this->handler->renew($this->test_apex_domain, $period);
@@ -82,6 +85,8 @@ class TestDomainInfo extends BaseTestCase {
         $result = $this->handler->getResult();
         $this->assertTrue(strtotime($result->expiration_date) > (time()+10*31536000));
         $this->assertTrue(strtotime($result->expiration_date) < (time()+11*31536000));
+        $this->assertTrue(strtotime($result->deletion_date) > (time()+10*31536000));
+        $this->assertTrue(strtotime($result->deletion_date) < (time()+11*31536000));
 
         $period = 1;
         $response = $this->handler->renew($this->test_apex_domain, $period);

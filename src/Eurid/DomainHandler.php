@@ -81,6 +81,7 @@ class DomainHandler extends BaseHandler
         $domain_name->domain_name = $domain_data->name;
         $domain_name->registration_date = $domain_data->crDate;
         $domain_name->expiration_date = $domain_data->exDate;
+        $domain_name->deletion_date = $domain_data->delDate;
         $domain_name->last_update = $domain_data->upDate;
 
         if($domain_data->onHold) $domain_name[]='onHold';
@@ -287,6 +288,10 @@ class DomainHandler extends BaseHandler
                                 $contact_reseller_cid=$contact_reseller,
                                 $nameservers=$norm_nameservers
                                 );
+
+            $domain_data = $this->client->domainInfo($domain=$apex_domain, $include_contacts=False, $include_namservers=False);
+            $this->client->deleteDomain($apex_domain, $domain_data->exDate);
+
         }catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
@@ -333,9 +338,16 @@ class DomainHandler extends BaseHandler
         $result = $this->getResult();
         list($expiration_date, $_) = explode("T", $result->expiration_date, 2);
 
+
         $this->login();
         try {
-            $result = $this->client->renewDomain($apex_domain, $period, $expiration_date);
+            $this->client->renewDomain($apex_domain, $period, $expiration_date);
+            if(!$this->info($apex_domain, $include_contacts=False, $include_namservers=False)){
+                return False;
+            }
+            $result = $this->getResult();
+            $delDate = $result->expiration_date;
+            $result = $this->client->deleteDomain($apex_domain, $delDate);
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
