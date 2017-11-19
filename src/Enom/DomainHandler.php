@@ -12,69 +12,81 @@ require_once(__DIR__ . '../../DomainHandlerInterface.php');
 require_once(__DIR__ . '../../BaseHandler.php');
 require_once(__DIR__ . '../../ApiException.php');
 
-
 class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
-                    implements \AgileGeeks\RegistrarFacade\DomainHandlerInterface {
+    implements \AgileGeeks\RegistrarFacade\DomainHandlerInterface
+{
     protected $enom = null;
     protected $domain = null;
 
-    private function format_enom_error_message($e){
+    private function format_enom_error_message($e)
+    {
         $errors = get_object_vars($e->getErrors());
         $error_message = '';
         foreach ($errors as $key => $val) {
-            $error_message .= $val." ";
+            $error_message .= $val . " ";
         }
         $this->setError(trim($error_message));
     }
 
-    public function __construct($config){
+    public function __construct($config)
+    {
         parent::__construct($config);
     }
 
-    public function getEnomInstance(){
-        if ($this->enom==null){
-            if (!isset($this->config['verify_ssl'])){
+    public function getEnomInstance()
+    {
+        if ($this->enom == null) {
+            if (!isset($this->config['verify_ssl'])) {
                 $this->config['verify_ssl'] = false;
             }
             $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url'], $this->config['verify_ssl']);
         }
+        
         return $this->enom;
     }
 
-    public function getDomainInstance(){
-        if ($this->domain==null){
+    public function getDomainInstance()
+    {
+        if ($this->domain == null) {
             $this->domain = new Enom\Domain($this->getEnomInstance());
         }
+        
         return $this->domain;
     }
 
-    public function check_availability($apex_domain){
-        list($sld,$tld) = Helpers\apex_split($apex_domain);
+    public function check_availability($apex_domain)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
+        
         try {
             $result = $domain->check($sld, $tld);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
-        if ($result->RRPCode==210){
+        
+        if ($result->RRPCode == 210) {
             $this->setResult(True);
-        }else{
+        } else {
             $this->setResult(False);
         }
+        
         return True;
     }
 
-    public function info($apex_domain, $include_contacts=True, $include_namservers=True){
+    public function info($apex_domain, $include_contacts = True, $include_namservers = True)
+    {
         $contact_type_mapping = array(
-            'admin'=>'contact_admin',
-            'tech'=>'contact_tech',
-            'registrant'=>'contact_registrant',
-            'billing'=>'contact_billing'
+            'admin' => 'contact_admin',
+            'tech' => 'contact_tech',
+            'registrant' => 'contact_registrant',
+            'billing' => 'contact_billing'
         );
 
-        list($sld,$tld) = Helpers\apex_split($apex_domain);
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
+        
         try {
             $result = $domain->getInfo($sld, $tld);
         } catch (Enom\EnomApiException $e) {
@@ -89,14 +101,14 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $domain_name->registrar = $result->GetDomainInfo->status->registrar;
 
         //get contacts info
-        if($include_contacts===True){
+        if ($include_contacts === True) {
             try {
                 $result = $domain->getContactInformation($sld, $tld);
             } catch (Enom\EnomApiException $e) {
                 $this->format_enom_error_message($e);
                 return False;
             }
-            
+
             foreach ($result as $contact_type => $domain_contact) {
                 $contact = new Models\ContactModel();
                 $contact->organization_name = Helpers\object_to_empty_string($domain_contact->OrganizationName);
@@ -116,16 +128,15 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
         //finished getting contacts info
 
-
         //get nameservers info
-        if($include_namservers===True){
+        if ($include_namservers === True) {
             try {
                 $result = $domain->getNSInformation($sld, $tld);
             } catch (Enom\EnomApiException $e) {
                 $this->format_enom_error_message($e);
                 return False;
             }
-            if (isset($result->dns) && is_array($result->dns)){
+            if (isset($result->dns) && is_array($result->dns)) {
                 foreach ($result->dns as $ns) {
                     $domain_name->nameservers[] = $ns;
                 }
@@ -133,47 +144,48 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
         //finished getting nameservers info
 
-
         $this->setResult($domain_name);
         return True;
     }
 
-    public function register($apex_domain,
-                        $registration_period=1,
-                        $nameservers=array(),
-                        $domain_password=null,
-                        $contact_registrant=null,
-                        $contact_tech=null,
-                        $contact_admin=null,
-                        $contact_billing=null,
-                        $extra_params=array()
-                    ){
-        list($sld,$tld) = Helpers\apex_split($apex_domain);
+    public function register(
+        $apex_domain,
+        $registration_period = 1,
+        $nameservers = array(),
+        $domain_password = null,
+        $contact_registrant = null,
+        $contact_tech = null,
+        $contact_admin = null,
+        $contact_billing = null,
+        $extra_params = array()
+    )
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
 
         $domain = $this->getDomainInstance();
         $extendedAttributes = array(
-            'RegistrantOrganizationName'=>$contact_registrant->organization_name,
-            'RegistrantFirstName'=>$contact_registrant->first_name,
-            'RegistrantLastName'=>$contact_registrant->last_name,
-            'RegistrantAddress1'=>$contact_registrant->address1,
-            'RegistrantAddress2'=>$contact_registrant->address2,
-            'RegistrantCity'=>$contact_registrant->city,
-            'RegistrantStateProvince'=>$contact_registrant->state_province,
-            'RegistrantPostalCode'=>$contact_registrant->postal_code,
-            'RegistrantCountry'=>$contact_registrant->country,
-            'RegistrantEmailAddress'=>$contact_registrant->email,
-            'RegistrantPhone'=>$contact_registrant->phone,
-            'RegistrantFax'=>$contact_registrant->fax,
-            'DomainPassword'=>$domain_password,
-            'NumYears'=>$registration_period,
-            'IgnoreNSFail'=>'Yes',
+            'RegistrantOrganizationName' => $contact_registrant->organization_name,
+            'RegistrantFirstName' => $contact_registrant->first_name,
+            'RegistrantLastName' => $contact_registrant->last_name,
+            'RegistrantAddress1' => $contact_registrant->address1,
+            'RegistrantAddress2' => $contact_registrant->address2,
+            'RegistrantCity' => $contact_registrant->city,
+            'RegistrantStateProvince' => $contact_registrant->state_province,
+            'RegistrantPostalCode' => $contact_registrant->postal_code,
+            'RegistrantCountry' => $contact_registrant->country,
+            'RegistrantEmailAddress' => $contact_registrant->email,
+            'RegistrantPhone' => $contact_registrant->phone,
+            'RegistrantFax' => $contact_registrant->fax,
+            'DomainPassword' => $domain_password,
+            'NumYears' => $registration_period,
+            'IgnoreNSFail' => 'Yes',
 
         );
 
-        for ($i=0; $i <sizeof($nameservers) ; $i++) {
-            if (array_key_exists($i, $nameservers)){
-                $key = $i+1;
-                $extendedAttributes['NS'.$key] = $nameservers[$i];
+        for ($i = 0; $i < sizeof($nameservers); $i++) {
+            if (array_key_exists($i, $nameservers)) {
+                $key = $i + 1;
+                $extendedAttributes['NS' . $key] = $nameservers[$i];
             }
         }
 
@@ -183,6 +195,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             $this->format_enom_error_message($e);
             return False;
         }
+
         return True;
 
     }
@@ -201,7 +214,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $domain = $this->getDomainInstance();
         $extendedAttributes = array(
             'Service' => $service,
-            'NumYears' => $period,            
+            'NumYears' => $period,
         );
 
         try {
@@ -214,44 +227,82 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
-    public function update_nameservers($apex_domain, $nameservers=array()){
-        list($sld,$tld) = Helpers\apex_split($apex_domain);
+    public function update_nameservers($apex_domain, $nameservers = array())
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         $extendedAttributes = array();
-        for ($i=0; $i <sizeof($nameservers) ; $i++) {
-            if (array_key_exists($i, $nameservers)){
-                $key = $i+1;
-                $extendedAttributes['NS'.$key] = $nameservers[$i];
+        
+        for ($i = 0; $i < sizeof($nameservers); $i++) {
+            if (array_key_exists($i, $nameservers)) {
+                $key = $i + 1;
+                $extendedAttributes['NS' . $key] = $nameservers[$i];
             }
         }
+        
         try {
             $result = $domain->ModifyNameservers($sld, $tld, $extendedAttributes);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
+        
         return True;
     }
 
-    public function renew($apex_domain, $period=1){
-        list($sld,$tld) = Helpers\apex_split($apex_domain);
+    public function renew($apex_domain, $period = 1)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         $period = intval($period);
-        if($period<1 || $period>10){
+        
+        if ($period < 1 || $period > 10) {
             $this->setError('Invalid period');
             return False;
         }
+        
         try {
             $result = $domain->extend($sld, $tld, $period);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
+        
         return True;
     }
 
-    public function activate($apex_domain){
+    public function activate($apex_domain)
+    {
+        return True;
+    }
+
+    public function contact_update($apex_domain, $contact_registrant)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        $registrant_data = array(
+            'RegistrantOrganizationName' => $contact_registrant->organization_name,
+            'RegistrantFirstName' => $contact_registrant->first_name,
+            'RegistrantLastName' => $contact_registrant->last_name,
+            'RegistrantAddress1' => $contact_registrant->address1,
+            'RegistrantAddress2' => $contact_registrant->address2,
+            'RegistrantCity' => $contact_registrant->city,
+            'RegistrantStateProvince' => $contact_registrant->state_province,
+            'RegistrantPostalCode' => $contact_registrant->postal_code,
+            'RegistrantCountry' => $contact_registrant->country,
+            'RegistrantEmailAddress' => $contact_registrant->email,
+            'RegistrantPhone' => $contact_registrant->phone,
+            'RegistrantFax' => $contact_registrant->fax,
+        );
+
+        try {
+            $result = $domain->setContactInformation($sld, $tld, $registrant_data);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+        
         return True;
     }
 }
-?>
