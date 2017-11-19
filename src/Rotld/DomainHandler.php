@@ -242,7 +242,15 @@ class DomainHandler extends BaseHandler
 
     public function contact_update($apex_domain, $contact_registrant)
     {
+        $domain_data = $this->client->info_domain($apex_domain);
+
+        if (!$domain_data) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
         $registrant_data = array();
+        $registrant_data['cid'] = $domain_data->registrant_id;
         $registrant_data['name'] = $contact_registrant->first_name . " " . $contact_registrant->last_name;
         $registrant_data['cnp_fiscal_code'] = $contact_registrant->cnp_fiscal_code;
         $registrant_data['registration_number'] = $contact_registrant->registration_number;

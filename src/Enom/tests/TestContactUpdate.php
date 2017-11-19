@@ -52,10 +52,6 @@ class TestContactUpdate extends BaseTestCase
 
     public function test_contact_update()
     {
-        $response = $this->handler->info($this->test_apex_domain, $include_contacts = True);
-        $this->assertTrue($response);
-        $result = $this->handler->getResult();
-
         $contact_data = (object)array(
             'organization_name' => 'Agile Geeks',
             'first_name' => 'Radu',
