@@ -198,5 +198,16 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function transfer($apex_domain, $authorization_key) {
+        $result = $this->client->transfer_domain($apex_domain, $authorization_key);
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
+        return True;
+    }
+
 }
 ?>
