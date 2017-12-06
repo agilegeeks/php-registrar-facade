@@ -305,4 +305,22 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         
         return True;
     }
+
+    public function transfer($apex_domain, $authorization_key)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+        $extra_params = array(
+            'AuthInfo1' => $authorization_key
+        );
+
+        try {
+            $result = $domain->transferIn($sld, $tld, $extra_params);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
 }
