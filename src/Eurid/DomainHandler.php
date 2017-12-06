@@ -420,4 +420,20 @@ class DomainHandler extends BaseHandler
 
         return True;
     }
+
+    public function transfer($apex_domain, $authorization_key) {
+        try {
+            $this->login();
+            $this->client->transfer(
+                $domain = $apex_domain,
+                $authInfo = $authorization_key,
+                $period = '1'
+            );
+        } catch (Eurid_Exception $e) {
+            $this->format_eurid_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
 }
