@@ -17,5 +17,6 @@ interface DomainHandlerInterface
     public function update_nameservers($apex_domain,$nameservers);
     public function activate($apex_domain);
     public function renew($apex_domain,$period);
+    public function transfer($apex_domain, $authorization_key);
 }
 ?>
