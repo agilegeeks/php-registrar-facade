@@ -68,6 +68,7 @@ class DomainHandler extends BaseHandler
         $domain_name->expiration_date = $domain_data->expiration_date==null ? '' : strtotime($domain_data->expiration_date);
         $domain_name->deletion_date = $domain_data->deletion_date==null ? '' : strtotime($domain_data->deletion_date);
         $domain_name->registrant_id = $domain_data->registrant_id;
+        $domain_name->statuses = $domain_data->statuses;
 
         //get contacts info
         if($include_contacts===True){
@@ -147,19 +148,33 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        $result = $this->client->register_domain(
-            $domain_name = $apex_domain,
-            $domain_period = $registration_period,
-            $registrant_cid = $cid,
-            $domain_password =  $domain_password
-        );
+        $reservation = false;
+        if (isset($extra_params['reservation']) && $extra_params['reservation']==true){
+            $reservation = true;
+        }
+
+        if ($reservation){
+            $result = $this->client->reserve_domain(
+                $domain_name = $apex_domain,
+                $domain_period = $registration_period,
+                $registrant_cid = $cid,
+                $domain_password =  $domain_password
+            );
+        }else{
+            $result = $this->client->register_domain(
+                $domain_name = $apex_domain,
+                $domain_period = $registration_period,
+                $registrant_cid = $cid,
+                $domain_password =  $domain_password
+            );
+        }
 
         if (!$result){
             $this->setError($this->client->getResultMessage());
             return False;
         }
 
-        if (sizeof($nameservers)>0){
+        if (sizeof($nameservers)>0 && !$reservation){
             $result = $this->client->reset_nameservers(
                 $domain_name = $apex_domain,
                 $nameservers = $nameservers
@@ -206,6 +221,12 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
+    public function activate($apex_domain){
+        $result = $this->client->activate_domain($apex_domain);
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
         return True;
     }
 
