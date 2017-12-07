@@ -239,5 +239,36 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function contact_update($apex_domain, $contact_registrant)
+    {
+        $domain_data = $this->client->info_domain($apex_domain);
+        if (!$domain_data) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        $registrant_data = array();
+        $registrant_data['cid'] = $domain_data->registrant_id;
+        $registrant_data['name'] = $contact_registrant->first_name . " " . $contact_registrant->last_name;
+        $registrant_data['cnp_fiscal_code'] = $contact_registrant->cnp_fiscal_code;
+        $registrant_data['registration_number'] = $contact_registrant->registration_number;
+        $registrant_data['email'] = $contact_registrant->email;
+        $registrant_data['phone'] = $contact_registrant->phone;
+        $registrant_data['fax'] = $contact_registrant->fax;
+        $registrant_data['address1'] = $contact_registrant->address1;
+        $registrant_data['address2'] = $contact_registrant->address2;
+        $registrant_data['address3'] = $contact_registrant->address3;
+        $registrant_data['city'] = $contact_registrant->city;
+        $registrant_data['state_province'] = $contact_registrant->state_province;
+        $registrant_data['postal_code'] = $contact_registrant->postal_code;
+        $registrant_data['country_code'] = $contact_registrant->country;
+        $registrant_data['person_type'] = $contact_registrant->person_type;
+        $result = $this->client->contact_update($registrant_data);
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        return True;
+    }
+
 }
 ?>
