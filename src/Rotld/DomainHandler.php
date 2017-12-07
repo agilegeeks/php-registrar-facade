@@ -127,7 +127,13 @@ class DomainHandler extends BaseHandler
 
 
         $registrant_data = array();
-        $registrant_data['name'] = $contact_registrant->first_name." ".$contact_registrant->last_name;
+
+        if ($contact_registrant->person_type == 'p') {
+            $registrant_data['name'] = $contact_registrant->first_name." ".$contact_registrant->last_name;
+        } else {
+            $registrant_data['name'] = $contact_registrant->organization_name;
+        }
+        
         $registrant_data['cnp_fiscal_code'] = $contact_registrant->cnp_fiscal_code;
         $registrant_data['registration_number'] = $contact_registrant->registration_number;
         $registrant_data['email'] = $contact_registrant->email;
