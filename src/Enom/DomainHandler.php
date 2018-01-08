@@ -41,7 +41,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             }
             $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url'], $this->config['verify_ssl']);
         }
-        
+
         return $this->enom;
     }
 
@@ -50,7 +50,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         if ($this->domain == null) {
             $this->domain = new Enom\Domain($this->getEnomInstance());
         }
-        
+
         return $this->domain;
     }
 
@@ -58,20 +58,20 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
     {
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
-        
+
         try {
             $result = $domain->check($sld, $tld);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
-        
+
         if ($result->RRPCode == 210) {
             $this->setResult(True);
         } else {
             $this->setResult(False);
         }
-        
+
         return True;
     }
 
@@ -86,7 +86,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
-        
+
         try {
             $result = $domain->getInfo($sld, $tld);
         } catch (Enom\EnomApiException $e) {
@@ -232,21 +232,21 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         $extendedAttributes = array();
-        
+
         for ($i = 0; $i < sizeof($nameservers); $i++) {
             if (array_key_exists($i, $nameservers)) {
                 $key = $i + 1;
                 $extendedAttributes['NS' . $key] = $nameservers[$i];
             }
         }
-        
+
         try {
             $result = $domain->ModifyNameservers($sld, $tld, $extendedAttributes);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
-        
+
         return True;
     }
 
@@ -255,19 +255,19 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
         $period = intval($period);
-        
+
         if ($period < 1 || $period > 10) {
             $this->setError('Invalid period');
             return False;
         }
-        
+
         try {
             $result = $domain->extend($sld, $tld, $period);
         } catch (Enom\EnomApiException $e) {
             $this->format_enom_error_message($e);
             return False;
         }
-        
+
         return True;
     }
 
@@ -302,7 +302,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             $this->format_enom_error_message($e);
             return False;
         }
-        
+
         return True;
     }
 
@@ -321,6 +321,93 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             return False;
         }
 
+        return True;
+    }
+
+    public function set_lock($apex_domain, $lock)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->setRegLock($sld, $tld, $lock);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
+
+    public function check_nameserver($apex_domain, $nameserver)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->checkNameserver($nameserver);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
+
+    public function create_nameserver($apex_domain, $nameserver, $ip)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        $this->set_lock($apex_domain, '1');
+
+        try {
+            $result = $domain->registerNameserver($nameserver, $ip);
+        } catch (Enom\EnomApiException $e) {
+            $this->set_lock($apex_domain, '0');
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        $this->set_lock($apex_domain, '0');
+        return True;
+    }
+
+    public function update_nameserver($apex_domain, $nameserver, $ip, $old_ip)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        $this->set_lock($apex_domain, '1');
+
+        try {
+            $result = $domain->updateNameserver($nameserver, $old_ip, $ip);
+        } catch (Enom\EnomApiException $e) {
+            $this->set_lock($apex_domain, '0');
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        $this->set_lock($apex_domain, '0');
+        return True;
+    }
+
+    public function delete_nameserver($apex_domain, $nameserver)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        $this->set_lock($apex_domain, '1');
+
+        try {
+            $result = $domain->deleteNameserver($nameserver);
+        } catch (Enom\EnomApiException $e) {
+            $this->set_lock($apex_domain, '0');
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        $this->set_lock($apex_domain, '0');
         return True;
     }
 }
