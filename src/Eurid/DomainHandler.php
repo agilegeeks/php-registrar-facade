@@ -421,7 +421,8 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
-    public function transfer($apex_domain, $authorization_key) {
+    public function transfer($apex_domain, $authorization_key)
+    {
         try {
             $this->login();
             $this->client->transfer(
@@ -435,5 +436,17 @@ class DomainHandler extends BaseHandler
         }
 
         return True;
+    }
+
+    public function create_nameserver($apex_domain, $nameserver, $ip)
+    {
+    }
+
+    public function update_nameserver($apex_domain, $nameserver, $ip, $old_ip)
+    {
+    }
+
+    public function delete_nameserver($apex_domain, $nameserver)
+    {
     }
 }

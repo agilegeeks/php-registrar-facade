@@ -270,5 +270,39 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function create_nameserver($apex_domain, $nameserver, $ip)
+    {
+        $result = $this->client->create_nameserver($nameserver, $ip);
+        
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        
+        return True;
+    }
+
+    public function update_nameserver($apex_domain, $nameserver, $ip, $old_ip)
+    {
+        $result = $this->client->update_nameserver($nameserver, $ip);
+        
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        
+        return True;
+    }
+
+    public function delete_nameserver($apex_domain, $nameserver)
+    {
+        $result = $this->client->delete_nameserver($nameserver);
+        
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        
+        return True;
+    }
 }
-?>
