@@ -338,8 +338,31 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        $ns_to_add = array_diff($nameservers, $domain_data->nameservers);
-        $ns_to_remove = array_diff($domain_data->nameservers, $nameservers);
+        $chg_ns_to_remove = array();
+        $ns_to_add = array_diff_key($nameservers, $domain_data->nameservers);
+        $ns_to_remove = array_diff_key($domain_data->nameservers, $nameservers);
+
+        // deep check for ip changes
+        foreach ($domain_data->nameservers as $ns => $data) {
+            $diff1 = array_diff($nameservers[$ns]['ips'], $domain_data->nameservers[$ns]['ips']);
+            $diff2 = array_diff($domain_data->nameservers[$ns]['ips'], $nameservers[$ns]['ips']);
+
+            if (count($diff1) > 0 ||  count($diff2)) {
+                // we have different ips
+                // we need to submit this data to the registry
+                $chg_ns_to_remove[$ns] = $domain_data->nameservers[$ns];
+                $ns_to_add[$ns] = $nameservers[$ns]; 
+            }
+        }
+
+        if (!empty($chg_ns_to_remove)) {
+            try {
+                $domain_data = $this->client->updateNameservers($apex_domain, array(), $chg_ns_to_remove);
+            } catch (Eurid_Exception $e) {
+                $this->format_eurid_error_message($e);
+                return False;
+            }
+        }        
 
         if (empty($ns_to_add) && empty($ns_to_remove)) {
             return True;
