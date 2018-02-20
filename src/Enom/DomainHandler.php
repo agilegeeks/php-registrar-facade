@@ -414,4 +414,12 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
     public function trade($apex_domain, $authorization_key, $contact_registrant)
     {
     }
+
+    public function trade_info($tid)
+    {
+    }
+
+    public function trade_confirm($tid)
+    {
+    }
 }

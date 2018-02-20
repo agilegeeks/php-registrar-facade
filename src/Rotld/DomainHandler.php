@@ -269,6 +269,30 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function trade_info($tid)
+    {
+        $result = $this->client->trade_info($tid);
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
+        return True;
+    }
+
+    public function trade_confirm($tid)
+    {
+        $result = $this->client->trade_confirm($tid);
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
+        return True;
+    }
+
     public function activate($apex_domain){
         $result = $this->client->activate_domain($apex_domain);
         if (!$result){

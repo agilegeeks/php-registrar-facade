@@ -22,5 +22,7 @@ interface DomainHandlerInterface
     public function renew($apex_domain,$period);
     public function transfer($apex_domain, $authorization_key);
     public function trade($apex_domain, $authorization_key, $contact_registrant);
+    public function trade_info($tid);
+    public function trade_confirm($tid);
 }
 ?>
