@@ -266,6 +266,7 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
+        $this->setResult($result);
         return True;
     }
 
