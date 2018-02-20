@@ -230,6 +230,45 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function trade($apex_domain, $authorization_key, $contact_registrant) {
+        $registrant_data = array();
+
+        if ($contact_registrant->person_type == 'p') {
+            $registrant_data['name'] = $contact_registrant->first_name." ".$contact_registrant->last_name;
+        } else {
+            $registrant_data['name'] = $contact_registrant->organization_name;
+        }
+        
+        $registrant_data['cnp_fiscal_code'] = $contact_registrant->cnp_fiscal_code;
+        $registrant_data['registration_number'] = $contact_registrant->registration_number;
+        $registrant_data['email'] = $contact_registrant->email;
+        $registrant_data['phone'] = $contact_registrant->phone;
+        $registrant_data['fax'] = $contact_registrant->fax;
+        $registrant_data['address1'] = $contact_registrant->address1;
+        $registrant_data['address2'] = $contact_registrant->address2;
+        $registrant_data['address3'] = $contact_registrant->address3;
+        $registrant_data['city'] = $contact_registrant->city;
+        $registrant_data['state_province'] = $contact_registrant->state_province;
+        $registrant_data['postal_code'] = $contact_registrant->postal_code;
+        $registrant_data['country_code'] = $contact_registrant->country;
+        $registrant_data['person_type'] = $contact_registrant->person_type;
+
+        $cid = $this->client->create_contact($registrant_data);
+        if (!$cid){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
+        $result = $this->client->trade_domain($apex_domain, $authorization_key, $cid);
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+
+        return True;
+    }
+
     public function activate($apex_domain){
         $result = $this->client->activate_domain($apex_domain);
         if (!$result){

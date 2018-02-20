@@ -472,4 +472,8 @@ class DomainHandler extends BaseHandler
     public function delete_nameserver($apex_domain, $nameserver)
     {
     }
+
+    public function trade($apex_domain, $authorization_key, $contact_registrant)
+    {
+    }
 }

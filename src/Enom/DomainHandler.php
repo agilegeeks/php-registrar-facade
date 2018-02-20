@@ -410,4 +410,8 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $this->set_lock($apex_domain, '0');
         return True;
     }
+
+    public function trade($apex_domain, $authorization_key, $contact_registrant)
+    {
+    }
 }
