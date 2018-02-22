@@ -230,7 +230,7 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
-    public function trade($apex_domain, $authorization_key, $contact_registrant) {
+    public function trade($apex_domain, $authorization_key, $contact_registrant, $period) {
         $registrant_data = array();
 
         if ($contact_registrant->person_type == 'p') {
@@ -259,7 +259,7 @@ class DomainHandler extends BaseHandler
             return False;
         }
 
-        $result = $this->client->trade_domain($apex_domain, $authorization_key, $cid);
+        $result = $this->client->trade_domain($apex_domain, $authorization_key, $cid, $period);
 
         if (!$result) {
             $this->setError($this->client->getResultMessage());

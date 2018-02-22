@@ -473,7 +473,7 @@ class DomainHandler extends BaseHandler
     {
     }
 
-    public function trade($apex_domain, $authorization_key, $contact_registrant)
+    public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
     {
     }
 
