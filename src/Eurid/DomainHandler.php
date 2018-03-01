@@ -430,6 +430,7 @@ class DomainHandler extends BaseHandler
                 $street2 = $contact_registrant->address2,
                 $street3 = $contact_registrant->address3,
                 $city = $contact_registrant->city,
+                $state_province = $contact_registrant->state_province,
                 $postal_code = $contact_registrant->postal_code,
                 $country_code = $contact_registrant->country,
                 $phone = $contact_registrant->phone,
