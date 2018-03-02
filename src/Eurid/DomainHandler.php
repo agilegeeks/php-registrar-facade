@@ -148,6 +148,11 @@ class DomainHandler extends BaseHandler
                 }
                 
                 $contact->city = Helpers\object_to_empty_string($contact_data->city);
+                
+                if (isset($contact_data->sp)) {
+                    $contact->state_province = Helpers\object_to_empty_string($contact_data->sp);
+                }
+                
                 $contact->postal_code = Helpers\object_to_empty_string($contact_data->pc);
                 $contact->country = Helpers\object_to_empty_string($contact_data->cc);
                 $contact->phone = Helpers\object_to_empty_string($contact_data->voice);
@@ -191,6 +196,7 @@ class DomainHandler extends BaseHandler
                     $street2 = $contact_registrant->address2,
                     $street3 = $contact_registrant->address3,
                     $city = $contact_registrant->city,
+                    $state_province = $contact_registrant->state_province,
                     $postal_code = $contact_registrant->postal_code,
                     $country_code = $contact_registrant->country,
                     $phone = $contact_registrant->phone,
@@ -208,6 +214,7 @@ class DomainHandler extends BaseHandler
                     $street2 = $contact_tech->address2,
                     $street3 = $contact_tech->address3,
                     $city = $contact_tech->city,
+                    $state_province = $contact_tech->state_province,
                     $postal_code = $contact_tech->postal_code,
                     $country_code = $contact_tech->country,
                     $phone = $contact_tech->phone,
@@ -230,6 +237,7 @@ class DomainHandler extends BaseHandler
                     $street2 = $contact_billing->address2,
                     $street3 = $contact_billing->address3,
                     $city = $contact_billing->city,
+                    $state_province = $contact_billing->state_province,
                     $postal_code = $contact_billing->postal_code,
                     $country_code = $contact_billing->country,
                     $phone = $contact_billing->phone,
@@ -251,6 +259,7 @@ class DomainHandler extends BaseHandler
                         $street2 = $contact_onsite->address2,
                         $street3 = $contact_onsite->address3,
                         $city = $contact_onsite->city,
+                        $state_province = $contact_onsite->state_province,
                         $postal_code = $contact_onsite->postal_code,
                         $country_code = $contact_onsite->country,
                         $phone = $contact_onsite->phone,
@@ -274,6 +283,7 @@ class DomainHandler extends BaseHandler
                         $street2 = $contact_reseller->address2,
                         $street3 = $contact_reseller->address3,
                         $city = $contact_reseller->city,
+                        $state_province = $contact_reseller->state_province,
                         $postal_code = $contact_reseller->postal_code,
                         $country_code = $contact_reseller->country,
                         $phone = $contact_reseller->phone,
