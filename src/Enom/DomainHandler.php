@@ -212,16 +212,33 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->getWPPSInfo($sld, $tld);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
         $extendedAttributes = array(
             'Service' => $service,
             'NumYears' => $period,
         );
 
-        try {
-            $result = $domain->purchaseService($sld, $tld, $extendedAttributes);
-        } catch (Enom\EnomApiException $e) {
-            $this->format_enom_error_message($e);
-            return False;
+        if ($result->GetWPPSInfo->WPPSExists == '1') {
+            try {
+                $result = $domain->renewService($sld, $tld, $extendedAttributes);
+            } catch (Enom\EnomApiException $e) {
+                $this->format_enom_error_message($e);
+                return false;
+            }
+        } else {
+            try {
+                $result = $domain->purchaseService($sld, $tld, $extendedAttributes);
+            } catch (Enom\EnomApiException $e) {
+                $this->format_enom_error_message($e);
+                return false;
+            }
         }
 
         return True;
