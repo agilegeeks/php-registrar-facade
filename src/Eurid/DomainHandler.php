@@ -472,6 +472,25 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function check_balance()
+    {
+        try {
+            $this->login();
+            $balance = $this->client->checkBalance();
+        } catch (Eurid_Exception $e) {
+            $this->format_eurid_error_message($e);
+            return false;
+        }
+
+        $result = (object) array(
+            'balance' => $balance->availableAmount
+        );
+
+        $this->setResult($result);
+
+        return true;
+    }
+
     public function create_nameserver($apex_domain, $nameserver, $ip)
     {
     }

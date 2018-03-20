@@ -428,6 +428,26 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
+    public function check_balance()
+    {
+        $domain = $this->getDomainInstance();
+
+        try {
+            $balance = $domain->getBalance();
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
+        $result = (object) array(
+            'balance' => $balance->AvailableBalance
+        );
+
+        $this->setResult($result);
+
+        return true;
+    }
+
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
     {
     }

@@ -24,5 +24,6 @@ interface DomainHandlerInterface
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period);
     public function trade_info($tid);
     public function trade_confirm($tid);
+    public function check_balance();
 }
 ?>

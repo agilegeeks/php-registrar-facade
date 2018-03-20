@@ -369,4 +369,18 @@ class DomainHandler extends BaseHandler
         
         return True;
     }
+
+    public function check_balance()
+    {
+        $result = $this->client->check_balance();
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return false;
+        }
+
+        $this->setResult($result);
+
+        return true;
+    }
 }
