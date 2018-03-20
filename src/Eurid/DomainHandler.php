@@ -125,7 +125,7 @@ class DomainHandler extends BaseHandler
 
             foreach ($domain_data->contacts as $ctype => $cid) {
                 if ($cid == null) continue;
-                
+
                 try {
                     $contact_data = $this->client->contactInfo($cid);
                     //var_dump($contact_data);
@@ -133,26 +133,26 @@ class DomainHandler extends BaseHandler
                     $this->format_eurid_error_message($e);
                     return False;
                 }
-                
+
                 $contact_type = $contact_type_mapping[$ctype];
                 $contact = new Models\EuridContactModel();
 
                 list($contact->first_name, $contact->last_name) = Helpers\object_to_empty_string(explode(" ", $contact_data->name, 2));
                 $contact->organization_name = Helpers\object_to_empty_string($contact_data->org);
                 $i = 1;
-                
+
                 foreach ($contact_data->street as $address) {
                     $prop = 'address' . $i;
                     $contact->{$prop} = $address;
                     $i = $i + 1;
                 }
-                
+
                 $contact->city = Helpers\object_to_empty_string($contact_data->city);
-                
+
                 if (isset($contact_data->sp)) {
                     $contact->state_province = Helpers\object_to_empty_string($contact_data->sp);
                 }
-                
+
                 $contact->postal_code = Helpers\object_to_empty_string($contact_data->pc);
                 $contact->country = Helpers\object_to_empty_string($contact_data->cc);
                 $contact->phone = Helpers\object_to_empty_string($contact_data->voice);
@@ -182,12 +182,12 @@ class DomainHandler extends BaseHandler
 
         try {
             $this->login();
-            
+
             if ($contact_registrant == null) {
                 throw new ApiException("Registrant contact is mandatory");
 
             }
-            
+
             if (!is_string($contact_registrant)) {
                 $contact_registrant = $this->client->createContact(
                     $name = $contact_registrant->first_name . " " . $contact_registrant->last_name,
@@ -205,7 +205,7 @@ class DomainHandler extends BaseHandler
                     $contact_type = 'registrant'
                 );
             }
-            
+
             if ($contact_tech != null && !is_string($contact_tech)) {
                 $contact_tech = $this->client->createContact(
                     $name = $contact_tech->first_name . " " . $contact_tech->last_name,
@@ -223,12 +223,12 @@ class DomainHandler extends BaseHandler
                     $contact_type = 'tech'
                 );
             }
-            
+
             if ($contact_billing == null) {
                 throw new ApiException("Billing contact is mandatory");
 
             }
-            
+
             if (!is_string($contact_billing)) {
                 $contact_billing = $this->client->createContact(
                     $name = $contact_billing->first_name . " " . $contact_billing->last_name,
@@ -246,9 +246,9 @@ class DomainHandler extends BaseHandler
                     $contact_type = 'billing'
                 );
             }
-            
+
             $contact_onsite = null;
-            
+
             if (isset($extra_params['contact_onsite']) && $extra_params['contact_onsite'] != null) {
                 $contact_onsite = $extra_params['contact_onsite'];
                 if (!is_string($contact_onsite)) {
@@ -270,9 +270,9 @@ class DomainHandler extends BaseHandler
                 }
 
             }
-            
+
             $contact_reseller = null;
-            
+
             if (isset($extra_params['contact_reseller']) && $extra_params['contact_reseller'] != null) {
                 $contact_reseller = $extra_params['contact_reseller'];
                 if (!is_string($contact_reseller)) {
@@ -295,7 +295,7 @@ class DomainHandler extends BaseHandler
             }
 
             $norm_nameservers = array();
-            
+
             if (sizeof($nameservers) > 0) {
                 foreach ($nameservers as $ns) {
                     if ($ns == null) {
@@ -339,7 +339,7 @@ class DomainHandler extends BaseHandler
     public function update_nameservers($apex_domain, $nameservers = array())
     {
         $this->login();
-        
+
         // Domain info to get current nameservers
         try {
             $domain_data = $this->client->domainInfo($apex_domain);
@@ -361,7 +361,7 @@ class DomainHandler extends BaseHandler
                 // we have different ips
                 // we need to submit this data to the registry
                 $chg_ns_to_remove[$ns] = $domain_data->nameservers[$ns];
-                $ns_to_add[$ns] = $nameservers[$ns]; 
+                $ns_to_add[$ns] = $nameservers[$ns];
             }
         }
 
@@ -372,7 +372,7 @@ class DomainHandler extends BaseHandler
                 $this->format_eurid_error_message($e);
                 return False;
             }
-        }        
+        }
 
         if (empty($ns_to_add) && empty($ns_to_remove)) {
             return True;
@@ -459,7 +459,7 @@ class DomainHandler extends BaseHandler
     {
         try {
             $this->login();
-            $this->client->transfer(
+            $this->client->domainTransferRequest(
                 $domain = $apex_domain,
                 $authInfo = $authorization_key,
                 $period = '1'
