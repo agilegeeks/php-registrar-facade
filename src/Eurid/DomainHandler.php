@@ -354,6 +354,11 @@ class DomainHandler extends BaseHandler
 
         // deep check for ip changes
         foreach ($domain_data->nameservers as $ns => $data) {
+            // check to see if the ns is marked for deletion
+            if (!array_key_exists($ns, $nameservers)) {
+                continue;
+            }
+
             $diff1 = array_diff($nameservers[$ns]['ips'], $domain_data->nameservers[$ns]['ips']);
             $diff2 = array_diff($domain_data->nameservers[$ns]['ips'], $nameservers[$ns]['ips']);
 
