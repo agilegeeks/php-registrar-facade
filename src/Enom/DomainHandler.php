@@ -94,8 +94,16 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             return False;
         }
 
+        try {
+            $whois_res = $domain->getWhoIsContactInformation($sld, $tld);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
         $domain_name = new Models\DomainNameModel();
         $domain_name->domain_name = $result->GetDomainInfo->domainname;
+        $domain_name->registration_date = strtotime($whois_res->GetWhoisContacts->{'rrp-info'}->{'created-date'});
         $domain_name->expiration_date = strtotime($result->GetDomainInfo->status->expiration);
         $domain_name->deletion_date = strtotime($result->GetDomainInfo->status->deletebydate);
         $domain_name->registrar = $result->GetDomainInfo->status->registrar;
