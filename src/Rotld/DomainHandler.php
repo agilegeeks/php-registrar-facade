@@ -64,7 +64,7 @@ class DomainHandler extends BaseHandler
         }
         $domain_name = new Models\RotldDomainNameModel ();
         $domain_name->domain_name = $domain_data->domain;
-        $domain_name->registration_date = $domain_data->registration_date;
+        $domain_name->registration_date = strtotime($domain_data->registration_date);
         $domain_name->expiration_date = $domain_data->expiration_date==null ? '' : strtotime($domain_data->expiration_date);
         $domain_name->deletion_date = $domain_data->deletion_date==null ? '' : strtotime($domain_data->deletion_date);
         $domain_name->registrant_id = $domain_data->registrant_id;

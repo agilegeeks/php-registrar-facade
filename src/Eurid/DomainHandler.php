@@ -91,10 +91,10 @@ class DomainHandler extends BaseHandler
 
         $domain_name = new Models\EuridDomainNameModel();
         $domain_name->domain_name = $domain_data->name;
-        $domain_name->registration_date = $domain_data->crDate;
-        $domain_name->expiration_date = $domain_data->exDate;
-        $domain_name->deletion_date = $domain_data->delDate;
-        $domain_name->last_update = $domain_data->upDate;
+        $domain_name->registration_date = strtotime($domain_data->crDate);
+        $domain_name->expiration_date = strtotime($domain_data->exDate);
+        $domain_name->deletion_date = strtotime($domain_data->delDate);
+        $domain_name->last_update = strtotime($domain_data->upDate);
 
         if ($domain_data->onHold) $domain_name[] = 'onHold';
         if ($domain_data->quarantined) $domain_name[] = 'quarantined';
