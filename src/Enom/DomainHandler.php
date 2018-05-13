@@ -107,6 +107,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $domain_name->expiration_date = strtotime($result->GetDomainInfo->status->expiration);
         $domain_name->deletion_date = strtotime($result->GetDomainInfo->status->deletebydate);
         $domain_name->registrar = $result->GetDomainInfo->status->registrar;
+        $domain_name->statuses = $result->GetDomainInfo->status;
 
         //get contacts info
         if ($include_contacts === True) {
