@@ -397,29 +397,22 @@ class DomainHandler extends BaseHandler
 
     public function renew($apex_domain, $period = 1)
     {
-        if (!$this->info($apex_domain, $include_contacts = False, $include_namservers = False)) {
-            return False;
-        }
-        $result = $this->getResult();
-        list($expiration_date, $_) = explode("T", $result->expiration_date, 2);
-
-
-        $this->login();
         try {
+            $this->login();
+            $result = $this->client->domainInfo($apex_domain, $include_contacts = False, $include_namservers = False);
+
+            $expiration_date = substr($result->exDate, 0, 10);
             $this->client->renewDomain($apex_domain, $period, $expiration_date);
-            if (!$this->info($apex_domain, $include_contacts = False, $include_namservers = False)) {
-                return False;
-            }
-            $result = $this->getResult();
-            $delDate = $result->expiration_date;
-            $result = $this->client->deleteDomain($apex_domain, $delDate);
+            
+            $result = $this->client->domainInfo($apex_domain, $include_contacts = False, $include_namservers = False);
+            $del_date = $result->exDate;
+            $result = $this->client->deleteDomain($apex_domain, $del_date);
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
 
         return True;
-
     }
 
     public function activate($apex_domain)
