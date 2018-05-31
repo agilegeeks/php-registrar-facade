@@ -219,7 +219,7 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
-    public function transfer($apex_domain, $authorization_key) {
+    public function transfer($apex_domain, $authorization_key, $contact_registrant = null) {
         $result = $this->client->transfer_domain($apex_domain, $authorization_key);
 
         if (!$result) {

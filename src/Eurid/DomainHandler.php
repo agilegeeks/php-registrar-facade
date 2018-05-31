@@ -453,14 +453,32 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
-    public function transfer($apex_domain, $authorization_key)
+    public function transfer($apex_domain, $authorization_key, $contact_registrant = null)
     {
         try {
             $this->login();
+            $registrant_id = $this->client->createContact(
+                $name = $contact_registrant->first_name . " " . $contact_registrant->last_name,
+                $organization = $contact_registrant->organization_name,
+                $street1 = $contact_registrant->address1,
+                $street2 = $contact_registrant->address2,
+                $street3 = $contact_registrant->address3,
+                $city = $contact_registrant->city,
+                $state_province = $contact_registrant->state_province,
+                $postal_code = $contact_registrant->postal_code,
+                $country_code = $contact_registrant->country,
+                $phone = $contact_registrant->phone,
+                $fax = $contact_registrant->fax,
+                $email = $contact_registrant->email,
+                $contact_type = 'registrant'
+            );
             $this->client->domainTransferRequest(
                 $domain = $apex_domain,
                 $authInfo = $authorization_key,
-                $period = '1'
+                $period = '1',
+                $cid = $registrant_id,
+                $billing = $this->config['contact_billing'],
+                $tech = $this->config['contact_tech']
             );
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);

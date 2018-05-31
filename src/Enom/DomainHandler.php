@@ -332,7 +332,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
-    public function transfer($apex_domain, $authorization_key)
+    public function transfer($apex_domain, $authorization_key, $contact_registrant = null)
     {
         list($sld, $tld) = Helpers\apex_split($apex_domain);
         $domain = $this->getDomainInstance();
