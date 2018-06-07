@@ -66,6 +66,8 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             return False;
         }
 
+        $this->extendedResult = $result;
+
         if ($result->RRPCode == 210) {
             $this->setResult(True);
         } else {
