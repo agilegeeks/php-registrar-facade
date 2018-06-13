@@ -102,10 +102,10 @@ class DomainHandler extends BaseHandler
         }
         //finished getting contacts info
 
-
         //get nameservers info
         if($include_namservers===True){
             $domain_name->nameservers = $domain_data->nameservers;
+            $domain_name->hosts = $domain_data->hosts;
         }
         //finished getting nameservers info
 
