@@ -370,6 +370,19 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
+    public function info_nameserver($apex_domain, $nameserver)
+    {
+        $result = $this->client->info_nameserver($nameserver);
+        
+        if (!$result){
+            $this->setError($this->client->getResultMessage());
+            return False;
+        }
+        
+        $this->setResult($result);
+        return True;
+    }
+
     public function check_balance()
     {
         $result = $this->client->check_balance();
