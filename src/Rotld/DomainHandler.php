@@ -80,7 +80,12 @@ class DomainHandler extends BaseHandler
             $contact = new Models\RotldContactModel();
             if($registrant_data->person_type=='p' || $registrant_data->person_type=='ap'){
                 $contact->organization_name = '';
-                list($contact->first_name, $contact->last_name) = Helpers\object_to_empty_string(explode(" ", $registrant_data->name, 2));
+                if (strpos($registrant_data->name, " ") > 0) {
+                    list($contact->first_name, $contact->last_name) = Helpers\object_to_empty_string(explode(" ", $registrant_data->name, 2));
+                } else {
+                    $contact->first_name = $registrant_data->name;
+                    $contact->last_name = '';
+                }
             }else{
                 $contact->organization_name = $registrant_data->name;
                 $contact->first_name='';
