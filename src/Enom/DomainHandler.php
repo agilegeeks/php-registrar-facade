@@ -39,7 +39,12 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             if (!isset($this->config['verify_ssl'])) {
                 $this->config['verify_ssl'] = false;
             }
-            $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url'], $this->config['verify_ssl']);
+
+            if (!isset($this->config['debug'])) {
+                $this->config['debug'] = false;
+            }
+
+            $this->enom = new Enom\Enom($this->config['uid'], $this->config['pw'], $this->config['base_url'], $this->config['verify_ssl'], $this->config['debug']);
         }
 
         return $this->enom;
