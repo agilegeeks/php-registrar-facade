@@ -152,10 +152,13 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                 $this->format_enom_error_message($e);
                 return False;
             }
+
             if (isset($result->dns) && is_array($result->dns)) {
                 foreach ($result->dns as $ns) {
                     $domain_name->nameservers[] = $ns;
                 }
+            } else if (is_string($result->dns)) {
+                $domain_name->nameservers[] = $result->dns;
             }
         }
         //finished getting nameservers info
