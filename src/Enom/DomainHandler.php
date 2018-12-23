@@ -467,6 +467,23 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return true;
     }
 
+    public function get_whois_protect_info($apex_domain)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->getWPPSInfo($sld, $tld);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
+        $this->setResult($result->GetWPPSInfo);
+
+        return true;
+    }
+
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
     {
     }

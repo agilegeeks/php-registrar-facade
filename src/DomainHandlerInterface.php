@@ -25,5 +25,6 @@ interface DomainHandlerInterface
     public function trade_info($tid);
     public function trade_confirm($tid);
     public function check_balance();
+    public function get_whois_protect_info($apex_domain);
 }
 ?>

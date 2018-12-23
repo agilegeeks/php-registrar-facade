@@ -401,4 +401,8 @@ class DomainHandler extends BaseHandler
 
         return true;
     }
+
+    public function get_whois_protect_info($apex_domain)
+    {
+    }
 }

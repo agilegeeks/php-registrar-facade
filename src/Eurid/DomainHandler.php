@@ -530,4 +530,8 @@ class DomainHandler extends BaseHandler
     public function trade_confirm($tid)
     {
     }
+
+    public function get_whois_protect_info($apex_domain)
+    {
+    }
 }
