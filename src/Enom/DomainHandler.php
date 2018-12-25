@@ -157,7 +157,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                 foreach ($result->dns as $ns) {
                     $domain_name->nameservers[] = $ns;
                 }
-            } else if (is_string($result->dns)) {
+            } else if (isset($result->dns) && is_string($result->dns)) {
                 $domain_name->nameservers[] = $result->dns;
             }
         }
