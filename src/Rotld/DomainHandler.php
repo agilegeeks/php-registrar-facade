@@ -181,7 +181,7 @@ class DomainHandler extends BaseHandler
         }
 
         if (!$result){
-            $this->setError($this->client->getResultMessage());
+            $this->setError($this->client->getResultMessage(), $this->client->getResultCode());
             return False;
         }
 
