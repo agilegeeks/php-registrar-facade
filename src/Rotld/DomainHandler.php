@@ -114,7 +114,7 @@ class DomainHandler extends BaseHandler
         }
         //finished getting nameservers info
 
-        if($include_s === True){
+        if($include_ds === True){
             $domain_name->ds_data = $domain_data->dsdata;
         }
 

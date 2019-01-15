@@ -174,10 +174,10 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             }
 
             $domain_name->ds_data = array(
-                'alg' => $result->Algorithm,
-                'digest' => $result->Digest,
-                'digest_type' => $result->DigestType,
-                'keytag' => $result->KeyTag
+                'alg' => @$result->Algorithm,
+                'digest' => @$result->Digest,
+                'digest_type' => @$result->DigestType,
+                'keytag' => @$result->KeyTag
             );
         }
 
