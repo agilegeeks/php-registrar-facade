@@ -95,12 +95,13 @@ class DomainHandler extends BaseHandler
         $domain_name->expiration_date = strtotime($domain_data->exDate);
         $domain_name->deletion_date = strtotime($domain_data->delDate);
         $domain_name->last_update = strtotime($domain_data->upDate);
+        $domain_name->statuses = array();
 
-        if ($domain_data->onHold) $domain_name[] = 'onHold';
-        if ($domain_data->quarantined) $domain_name[] = 'quarantined';
-        if ($domain_data->suspended) $domain_name[] = 'suspended';
-        if ($domain_data->seized) $domain_name[] = 'seized';
-        if ($domain_data->delayed) $domain_name[] = 'delayed';
+        if ($domain_data->onHold) $domain_name->statuses[] = 'onHold';
+        if ($domain_data->quarantined) $domain_name->statuses[] = 'quarantined';
+        if ($domain_data->suspended) $domain_name->statuses[] = 'suspended';
+        if ($domain_data->seized) $domain_name->statuses[] = 'seized';
+        if ($domain_data->delayed) $domain_name->statuses[] = 'delayed';
 
         $domain_name->registrant_id = $domain_data->contacts['registrant'];
         $domain_name->contact_tech_id = $domain_data->contacts['tech'];
