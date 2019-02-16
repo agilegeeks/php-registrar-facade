@@ -516,7 +516,7 @@ class DomainHandler extends BaseHandler
     {
         try {
             $this->login();
-            $balance = $this->client->updateDNSSEC($add = array((object)$ds_data));
+            $balance = $this->client->updateDNSSEC($apex_domain, array((object)$ds_data));
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
@@ -529,7 +529,7 @@ class DomainHandler extends BaseHandler
     {
         try {
             $this->login();
-            $balance = $this->client->updateDNSSEC($rem = array((object)$ds_data));
+            $balance = $this->client->updateDNSSEC($apex_domain, array(), array((object)$ds_data));
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return false;

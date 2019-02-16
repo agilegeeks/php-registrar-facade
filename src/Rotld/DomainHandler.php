@@ -407,7 +407,7 @@ class DomainHandler extends BaseHandler
 
     public function add_dnssec($apex_domain, $ds_data)
     {
-        $result = $this->client->add_dnssec($apex_domain, $ds_data);
+        $result = $this->client->add_dnssec_data($apex_domain, $ds_data);
 
         if (!$result) {
             $this->setError($this->client->getResultMessage());

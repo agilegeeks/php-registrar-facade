@@ -508,12 +508,12 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $domain = $this->getDomainInstance();
 
         try {
-            $result = $domain->deleteDNSSEC(
+            $result = $domain->addDNSSEC(
                 $sld,
                 $tld,
                 $ds_data['alg'],
-                $ds_data['digestType'],
                 $ds_data['digest'],
+                $ds_data['digest_type'],
                 $ds_data['keytag']
             );
         } catch (Enom\EnomApiException $e) {
@@ -534,8 +534,8 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                 $sld,
                 $tld,
                 $ds_data['alg'],
-                $ds_data['digestType'],
                 $ds_data['digest'],
+                $ds_data['digest_type'],
                 $ds_data['keytag']
             );
         } catch (Enom\EnomApiException $e) {
