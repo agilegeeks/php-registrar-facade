@@ -32,6 +32,7 @@ class ContactModel
     public $email = null;
     public $phone = null;
     public $fax = null;
+    public $job_title = null;
 
     public function getFullName(){
         return $this->first_name." ".$this->last_name;
