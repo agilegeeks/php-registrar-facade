@@ -50,7 +50,7 @@ class DomainHandler extends BaseHandler
         return True;
     }
 
-    public function info($apex_domain, $include_contacts=True, $include_namservers=True){
+    public function info($apex_domain, $include_contacts=True, $include_namservers=True, $include_ds=True){
         $contact_type_mapping = array(
             'Administrative'=>'contact_admin',
             'Technical'=>'contact_tech',
@@ -114,6 +114,9 @@ class DomainHandler extends BaseHandler
         }
         //finished getting nameservers info
 
+        if($include_ds === True){
+            $domain_name->ds_data = $domain_data->dsdata;
+        }
 
         $this->setResult($domain_name);
         return True;
@@ -391,6 +394,34 @@ class DomainHandler extends BaseHandler
     public function check_balance()
     {
         $result = $this->client->check_balance();
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return false;
+        }
+
+        $this->setResult($result);
+
+        return true;
+    }
+
+    public function add_dnssec($apex_domain, $ds_data)
+    {
+        $result = $this->client->add_dnssec_data($apex_domain, $ds_data);
+
+        if (!$result) {
+            $this->setError($this->client->getResultMessage());
+            return false;
+        }
+
+        $this->setResult($result);
+
+        return true;
+    }
+
+    public function delete_dnssec($apex_domain, $ds_data)
+    {
+        $result = $this->client->remove_dnssec_data($apex_domain, $ds_data);
 
         if (!$result) {
             $this->setError($this->client->getResultMessage());

@@ -82,7 +82,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
-    public function info($apex_domain, $include_contacts = True, $include_namservers = True)
+    public function info($apex_domain, $include_contacts = True, $include_namservers = True, $include_ds = True)
     {
         $contact_type_mapping = array(
             'admin' => 'contact_admin',
@@ -115,6 +115,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $domain_name->deletion_date = strtotime($result->GetDomainInfo->status->deletebydate);
         $domain_name->registrar = $result->GetDomainInfo->status->registrar;
         $domain_name->statuses = $result->GetDomainInfo->status;
+        $domain_name->ds_data = array();
 
         //get contacts info
         if ($include_contacts === True) {
@@ -162,6 +163,23 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
             }
         }
         //finished getting nameservers info
+
+        // get ds data
+        if ($include_ds === True) {
+            try {
+                $result = $domain->getDNSSEC($sld, $tld);
+            } catch (Enom\EnomApiException $e) {
+                $this->format_enom_error_message($e);
+                return false;
+            }
+
+            $domain_name->ds_data = array(
+                'alg' => @$result->Algorithm,
+                'digest' => @$result->Digest,
+                'digest_type' => @$result->DigestType,
+                'keytag' => @$result->KeyTag
+            );
+        }
 
         $this->setResult($domain_name);
         return True;
@@ -480,6 +498,50 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
 
         $this->setResult($result->GetWPPSInfo);
+
+        return true;
+    }
+
+    public function add_dnssec($apex_domain, $ds_data)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->addDNSSEC(
+                $sld,
+                $tld,
+                $ds_data['alg'],
+                $ds_data['digest'],
+                $ds_data['digest_type'],
+                $ds_data['keytag']
+            );
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function delete_dnssec($apex_domain, $ds_data)
+    {
+        list($sld, $tld) = Helpers\apex_split($apex_domain);
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->deleteDNSSEC(
+                $sld,
+                $tld,
+                $ds_data['alg'],
+                $ds_data['digest'],
+                $ds_data['digest_type'],
+                $ds_data['keytag']
+            );
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
 
         return true;
     }

@@ -26,5 +26,7 @@ interface DomainHandlerInterface
     public function trade_confirm($tid);
     public function check_balance();
     public function get_whois_protect_info($apex_domain);
+    public function add_dnssec($apex_domain, $ds_data);
+    public function delete_dnssec($apex_domain, $ds_data);
 }
 ?>
