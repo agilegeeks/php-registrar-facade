@@ -186,10 +186,10 @@ implements DomainHandlerInterface
         $extra_params = array()
     ) {
 
-        $natural_person = False;
+        $registrant_natural_person = false;
 
         if ($contact_registrant->person_type === 'p') {
-            $natural_person = True;
+            $registrant_natural_person = true;
         }
 
         try {
@@ -201,39 +201,39 @@ implements DomainHandlerInterface
 
             if (!is_string($contact_registrant)) {
                 $contact_registrant = $this->client->createContact(
-                    $name = $contact_registrant->first_name . " " . $contact_registrant->last_name,
-                    $organization = $contact_registrant->organization_name,
-                    $street1 = $contact_registrant->address1,
-                    $street2 = $contact_registrant->address2,
-                    $street3 = $contact_registrant->address3,
-                    $city = $contact_registrant->city,
-                    $state_province = $contact_registrant->state_province,
-                    $postal_code = $contact_registrant->postal_code,
-                    $country_code = $contact_registrant->country,
-                    $phone = $contact_registrant->phone,
-                    $fax = $contact_registrant->fax,
-                    $email = $contact_registrant->email,
-                    $contact_type = 'registrant',
-                    $natural_person = $natural_person
+                    $contact_registrant->first_name . " " . $contact_registrant->last_name,
+                    $contact_registrant->organization_name,
+                    $contact_registrant->address1,
+                    $contact_registrant->address2,
+                    $contact_registrant->address3,
+                    $contact_registrant->city,
+                    $contact_registrant->state_province,
+                    $contact_registrant->postal_code,
+                    $contact_registrant->country,
+                    $contact_registrant->phone,
+                    $contact_registrant->fax,
+                    $contact_registrant->email,
+                    $registrant_natural_person,
+                    'registrant'
                 );
             }
 
             if ($contact_tech != null && !is_string($contact_tech)) {
                 $contact_tech = $this->client->createContact(
-                    $name = $contact_tech->first_name . " " . $contact_tech->last_name,
-                    $organization = $contact_tech->organization_name,
-                    $street1 = $contact_tech->address1,
-                    $street2 = $contact_tech->address2,
-                    $street3 = $contact_tech->address3,
-                    $city = $contact_tech->city,
-                    $state_province = $contact_tech->state_province,
-                    $postal_code = $contact_tech->postal_code,
-                    $country_code = $contact_tech->country,
-                    $phone = $contact_tech->phone,
-                    $fax = $contact_tech->fax,
-                    $email = $contact_tech->email,
-                    $contact_type = 'tech',
-                    $natural_person = $contact_tech->person_type
+                    $contact_tech->first_name . " " . $contact_tech->last_name,
+                    $contact_tech->organization_name,
+                    $contact_tech->address1,
+                    $contact_tech->address2,
+                    $contact_tech->address3,
+                    $contact_tech->city,
+                    $contact_tech->state_province,
+                    $contact_tech->postal_code,
+                    $contact_tech->country,
+                    $contact_tech->phone,
+                    $contact_tech->fax,
+                    $contact_tech->email,
+                    false,
+                    'tech'
                 );
             }
 
@@ -243,20 +243,20 @@ implements DomainHandlerInterface
 
             if (!is_string($contact_billing)) {
                 $contact_billing = $this->client->createContact(
-                    $name = $contact_billing->first_name . " " . $contact_billing->last_name,
-                    $organization = $contact_billing->organization_name,
-                    $street1 = $contact_billing->address1,
-                    $street2 = $contact_billing->address2,
-                    $street3 = $contact_billing->address3,
-                    $city = $contact_billing->city,
-                    $state_province = $contact_billing->state_province,
-                    $postal_code = $contact_billing->postal_code,
-                    $country_code = $contact_billing->country,
-                    $phone = $contact_billing->phone,
-                    $fax = $contact_billing->fax,
-                    $email = $contact_billing->email,
-                    $contact_type = 'billing',
-                    $natural_person = $contact_billing->person_type
+                    $contact_billing->first_name . " " . $contact_billing->last_name,
+                    $contact_billing->organization_name,
+                    $contact_billing->address1,
+                    $contact_billing->address2,
+                    $contact_billing->address3,
+                    $contact_billing->city,
+                    $contact_billing->state_province,
+                    $contact_billing->postal_code,
+                    $contact_billing->country,
+                    $contact_billing->phone,
+                    $contact_billing->fax,
+                    $contact_billing->email,
+                    false,
+                    'billing'
                 );
             }
 
@@ -266,20 +266,20 @@ implements DomainHandlerInterface
                 $contact_onsite = $extra_params['contact_onsite'];
                 if (!is_string($contact_onsite)) {
                     $contact_onsite = $this->client->createContact(
-                        $name = $contact_onsite->first_name . " " . $contact_onsite->last_name,
-                        $organization = $contact_onsite->organization_name,
-                        $street1 = $contact_onsite->address1,
-                        $street2 = $contact_onsite->address2,
-                        $street3 = $contact_onsite->address3,
-                        $city = $contact_onsite->city,
-                        $state_province = $contact_onsite->state_province,
-                        $postal_code = $contact_onsite->postal_code,
-                        $country_code = $contact_onsite->country,
-                        $phone = $contact_onsite->phone,
-                        $fax = $contact_onsite->fax,
-                        $email = $contact_onsite->email,
-                        $contact_type = 'onsite',
-                        $natural_person = $contact_onsite->person_type
+                        $contact_onsite->first_name . " " . $contact_onsite->last_name,
+                        $contact_onsite->organization_name,
+                        $contact_onsite->address1,
+                        $contact_onsite->address2,
+                        $contact_onsite->address3,
+                        $contact_onsite->city,
+                        $contact_onsite->state_province,
+                        $contact_onsite->postal_code,
+                        $contact_onsite->country,
+                        $contact_onsite->phone,
+                        $contact_onsite->fax,
+                        $contact_onsite->email,
+                        $registrant_natural_person,
+                        'onsite'
                     );
                 }
             }
@@ -290,20 +290,20 @@ implements DomainHandlerInterface
                 $contact_reseller = $extra_params['contact_reseller'];
                 if (!is_string($contact_reseller)) {
                     $contact_reseller = $this->client->createContact(
-                        $name = $contact_reseller->first_name . " " . $contact_reseller->last_name,
-                        $organization = $contact_reseller->organization_name,
-                        $street1 = $contact_reseller->address1,
-                        $street2 = $contact_reseller->address2,
-                        $street3 = $contact_reseller->address3,
-                        $city = $contact_reseller->city,
-                        $state_province = $contact_reseller->state_province,
-                        $postal_code = $contact_reseller->postal_code,
-                        $country_code = $contact_reseller->country,
-                        $phone = $contact_reseller->phone,
-                        $fax = $contact_reseller->fax,
-                        $email = $contact_reseller->email,
-                        $contact_type = 'reseller',
-                        $natural_person = $contact_reseller->person_type
+                        $contact_reseller->first_name . " " . $contact_reseller->last_name,
+                        $contact_reseller->organization_name,
+                        $contact_reseller->address1,
+                        $contact_reseller->address2,
+                        $contact_reseller->address3,
+                        $contact_reseller->city,
+                        $contact_reseller->state_province,
+                        $contact_reseller->postal_code,
+                        $contact_reseller->country,
+                        $contact_reseller->phone,
+                        $contact_reseller->fax,
+                        $contact_reseller->email,
+                        false,
+                        'reseller'
                     );
                 }
             }
@@ -327,18 +327,18 @@ implements DomainHandlerInterface
                 }
             }
 
-            $result = $this->client->createDomain(
-                $domain = $apex_domain,
-                $period = $registration_period,
-                $registrant_cid = $contact_registrant,
-                $contact_tech_cid = $contact_tech,
-                $contact_billing_cid = $contact_billing,
-                $contact_onsite_cid = $contact_onsite,
-                $contact_reseller_cid = $contact_reseller,
-                $nameservers = $norm_nameservers
+            $this->client->createDomain(
+                $apex_domain,
+                $registration_period,
+                $contact_registrant,
+                $contact_tech,
+                $contact_billing,
+                $contact_onsite,
+                $contact_reseller,
+                $norm_nameservers
             );
 
-            $domain_data = $this->client->domainInfo($domain = $apex_domain, $include_contacts = False, $include_namservers = False);
+            $domain_data = $this->client->domainInfo($apex_domain, False, False);
             $this->client->deleteDomain($apex_domain, $domain_data->exDate);
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
