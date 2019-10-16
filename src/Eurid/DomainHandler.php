@@ -186,10 +186,10 @@ implements DomainHandlerInterface
         $extra_params = array()
     ) {
 
-        $registrant_natural_person = false;
+        $registrant_natural_person = 0;
 
         if ($contact_registrant->person_type === 'p') {
-            $registrant_natural_person = true;
+            $registrant_natural_person = 1;
         }
 
         try {
