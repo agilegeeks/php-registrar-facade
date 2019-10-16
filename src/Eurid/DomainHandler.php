@@ -1,4 +1,5 @@
 <?php
+
 namespace AgileGeeks\RegistrarFacade\Eurid;
 
 use AgileGeeks\EPP\Eurid\Client;
@@ -13,7 +14,7 @@ require_once(__DIR__ . '../../helpers.php');
 require_once(__DIR__ . '/models.php');
 
 class DomainHandler extends BaseHandler
-    implements DomainHandlerInterface
+implements DomainHandlerInterface
 {
     protected $client = null;
     protected $login = False;
@@ -162,6 +163,7 @@ class DomainHandler extends BaseHandler
                 $contact->country = Helpers\object_to_empty_string($contact_data->cc);
                 $contact->phone = Helpers\object_to_empty_string($contact_data->voice);
                 $contact->email = Helpers\object_to_empty_string($contact_data->email);
+                $contact->person_type = Helpers\object_to_empty_string($contact_data->natural_person);
 
                 $domain_name->{$contact_type} = $contact;
             }
@@ -182,15 +184,19 @@ class DomainHandler extends BaseHandler
         $contact_admin = null,
         $contact_billing = null,
         $extra_params = array()
-    )
-    {
+    ) {
+
+        $natural_person = False;
+
+        if ($contact_registrant->person_type === 'p') {
+            $natural_person = True;
+        }
 
         try {
             $this->login();
 
             if ($contact_registrant == null) {
                 throw new ApiException("Registrant contact is mandatory");
-
             }
 
             if (!is_string($contact_registrant)) {
@@ -207,7 +213,8 @@ class DomainHandler extends BaseHandler
                     $phone = $contact_registrant->phone,
                     $fax = $contact_registrant->fax,
                     $email = $contact_registrant->email,
-                    $contact_type = 'registrant'
+                    $contact_type = 'registrant',
+                    $natural_person = $natural_person
                 );
             }
 
@@ -225,13 +232,13 @@ class DomainHandler extends BaseHandler
                     $phone = $contact_tech->phone,
                     $fax = $contact_tech->fax,
                     $email = $contact_tech->email,
-                    $contact_type = 'tech'
+                    $contact_type = 'tech',
+                    $natural_person = $contact_tech->person_type
                 );
             }
 
             if ($contact_billing == null) {
                 throw new ApiException("Billing contact is mandatory");
-
             }
 
             if (!is_string($contact_billing)) {
@@ -248,7 +255,8 @@ class DomainHandler extends BaseHandler
                     $phone = $contact_billing->phone,
                     $fax = $contact_billing->fax,
                     $email = $contact_billing->email,
-                    $contact_type = 'billing'
+                    $contact_type = 'billing',
+                    $natural_person = $contact_billing->person_type
                 );
             }
 
@@ -270,10 +278,10 @@ class DomainHandler extends BaseHandler
                         $phone = $contact_onsite->phone,
                         $fax = $contact_onsite->fax,
                         $email = $contact_onsite->email,
-                        $contact_type = 'onsite'
+                        $contact_type = 'onsite',
+                        $natural_person = $contact_onsite->person_type
                     );
                 }
-
             }
 
             $contact_reseller = null;
@@ -294,7 +302,8 @@ class DomainHandler extends BaseHandler
                         $phone = $contact_reseller->phone,
                         $fax = $contact_reseller->fax,
                         $email = $contact_reseller->email,
-                        $contact_type = 'reseller'
+                        $contact_type = 'reseller',
+                        $natural_person = $contact_reseller->person_type
                     );
                 }
             }
@@ -331,14 +340,12 @@ class DomainHandler extends BaseHandler
 
             $domain_data = $this->client->domainInfo($domain = $apex_domain, $include_contacts = False, $include_namservers = False);
             $this->client->deleteDomain($apex_domain, $domain_data->exDate);
-
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
 
         return True;
-
     }
 
     public function update_nameservers($apex_domain, $nameservers = array())
@@ -408,7 +415,7 @@ class DomainHandler extends BaseHandler
 
             $expiration_date = substr($result->exDate, 0, 10);
             $this->client->renewDomain($apex_domain, $period, $expiration_date);
-            
+
             $result = $this->client->domainInfo($apex_domain, $include_contacts = False, $include_namservers = False);
             $del_date = $result->exDate;
             $result = $this->client->deleteDomain($apex_domain, $del_date);
@@ -431,6 +438,11 @@ class DomainHandler extends BaseHandler
             return False;
         }
         $result = $this->getResult();
+        $natural_person = False;
+
+        if ($contact_registrant->person_type === 'p') {
+            $natural_person = True;
+        }
 
         try {
             $this->login();
@@ -448,7 +460,8 @@ class DomainHandler extends BaseHandler
                 $country_code = $contact_registrant->country,
                 $phone = $contact_registrant->phone,
                 $fax = $contact_registrant->fax,
-                $email = $contact_registrant->email
+                $email = $contact_registrant->email,
+                $natural_person = $natural_person
             );
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
@@ -460,6 +473,12 @@ class DomainHandler extends BaseHandler
 
     public function transfer($apex_domain, $authorization_key, $contact_registrant = null)
     {
+        $natural_person = False;
+
+        if ($contact_registrant->person_type === 'p') {
+            $natural_person = True;
+        }
+
         try {
             $this->login();
             $registrant_id = $this->client->createContact(
@@ -475,7 +494,8 @@ class DomainHandler extends BaseHandler
                 $phone = $contact_registrant->phone,
                 $fax = $contact_registrant->fax,
                 $email = $contact_registrant->email,
-                $contact_type = 'registrant'
+                $contact_type = 'registrant',
+                $natural_person = $natural_person
             );
             $this->client->domainTransferRequest(
                 $domain = $apex_domain,
@@ -516,7 +536,7 @@ class DomainHandler extends BaseHandler
     {
         try {
             $this->login();
-            $balance = $this->client->updateDNSSEC($apex_domain, array((object)$ds_data));
+            $balance = $this->client->updateDNSSEC($apex_domain, array((object) $ds_data));
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
@@ -529,7 +549,7 @@ class DomainHandler extends BaseHandler
     {
         try {
             $this->login();
-            $balance = $this->client->updateDNSSEC($apex_domain, array(), array((object)$ds_data));
+            $balance = $this->client->updateDNSSEC($apex_domain, array(), array((object) $ds_data));
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
@@ -539,30 +559,23 @@ class DomainHandler extends BaseHandler
     }
 
     public function create_nameserver($apex_domain, $nameserver, $ip)
-    {
-    }
+    { }
 
     public function update_nameserver($apex_domain, $nameserver, $ip, $old_ip)
-    {
-    }
+    { }
 
     public function delete_nameserver($apex_domain, $nameserver)
-    {
-    }
+    { }
 
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
-    {
-    }
+    { }
 
     public function trade_info($tid)
-    {
-    }
+    { }
 
     public function trade_confirm($tid)
-    {
-    }
+    { }
 
     public function get_whois_protect_info($apex_domain)
-    {
-    }
+    { }
 }
