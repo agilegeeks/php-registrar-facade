@@ -326,6 +326,26 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return True;
     }
 
+    public function extend_expired($apex_domain, $period = 1)
+    {
+        $domain = $this->getDomainInstance();
+        $period = intval($period);
+
+        if ($period < 1 || $period > 10) {
+            $this->setError('Invalid period');
+            return False;
+        }
+
+        try {
+            $domain->updateExpiredDomains($apex_domain, $period);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return False;
+        }
+
+        return True;
+    }
+
     public function activate($apex_domain)
     {
         return True;
@@ -545,6 +565,44 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
 
         return true;
+    }
+
+    public function get_expired_domain($fqdn)
+    {
+        $domain = $this->getDomainInstance();
+
+        try {
+            $res = $domain->getExpiredDomain($fqdn);
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
+        $res = $res->GetDomains->GetExpiredDomains->item;
+        $result = (object) array(
+            'domain_name' => $res->sld.'.'.$res->tld,
+            'expiration_date' => $res->{'expiration-date'},
+            'expiration_status' => $res->{'expiration-status'},
+            'auto_renew' => $res->{'auto-renew'},
+            'ns_status' => $res->{'ns-status'},
+            'reactivate_price' => $res->ReactivatePrice
+        );
+
+        return $result;
+    }
+
+    public function get_expired_domains()
+    {
+        $domain = $this->getDomainInstance();
+
+        try {
+            $result = $domain->getExpired();
+        } catch (Enom\EnomApiException $e) {
+            $this->format_enom_error_message($e);
+            return false;
+        }
+
+        return $result;
     }
 
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
