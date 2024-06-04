@@ -187,9 +187,11 @@ implements DomainHandlerInterface
     ) {
 
         $registrant_natural_person = 0;
+        $country_of_residence = null;
 
         if ($contact_registrant->person_type === 'p') {
             $registrant_natural_person = 1;
+            $country_of_residence = $contact_registrant->country;
         }
 
         try {
@@ -214,11 +216,18 @@ implements DomainHandlerInterface
                     $contact_registrant->fax,
                     $contact_registrant->email,
                     $registrant_natural_person,
+                    $country_of_residence,
                     'registrant'
                 );
             }
 
             if ($contact_tech != null && !is_string($contact_tech)) {
+                $country_of_residence = null;
+
+                if ($contact_tech->person_type === 'p') {
+                    $country_of_residence = $contact_tech->country;
+                }
+
                 $contact_tech = $this->client->createContact(
                     $contact_tech->first_name . " " . $contact_tech->last_name,
                     $contact_tech->organization_name,
@@ -233,6 +242,7 @@ implements DomainHandlerInterface
                     $contact_tech->fax,
                     $contact_tech->email,
                     false,
+                    $country_of_residence,
                     'tech'
                 );
             }
@@ -242,6 +252,12 @@ implements DomainHandlerInterface
             }
 
             if (!is_string($contact_billing)) {
+                $country_of_residence = null;
+                
+                if ($contact_billing->person_type === 'p') {
+                    $country_of_residence = $contact_billing->country;
+                }
+
                 $contact_billing = $this->client->createContact(
                     $contact_billing->first_name . " " . $contact_billing->last_name,
                     $contact_billing->organization_name,
@@ -256,6 +272,7 @@ implements DomainHandlerInterface
                     $contact_billing->fax,
                     $contact_billing->email,
                     false,
+                    $country_of_residence,
                     'billing'
                 );
             }
@@ -264,7 +281,14 @@ implements DomainHandlerInterface
 
             if (isset($extra_params['contact_onsite']) && $extra_params['contact_onsite'] != null) {
                 $contact_onsite = $extra_params['contact_onsite'];
+
                 if (!is_string($contact_onsite)) {
+                    $country_of_residence = null;
+
+                    if ($contact_onsite->person_type === 'p') {
+                        $country_of_residence = $contact_onsite->country;
+                    }
+
                     $contact_onsite = $this->client->createContact(
                         $contact_onsite->first_name . " " . $contact_onsite->last_name,
                         $contact_onsite->organization_name,
@@ -279,6 +303,7 @@ implements DomainHandlerInterface
                         $contact_onsite->fax,
                         $contact_onsite->email,
                         $registrant_natural_person,
+                        $country_of_residence,
                         'onsite'
                     );
                 }
@@ -289,6 +314,12 @@ implements DomainHandlerInterface
             if (isset($extra_params['contact_reseller']) && $extra_params['contact_reseller'] != null) {
                 $contact_reseller = $extra_params['contact_reseller'];
                 if (!is_string($contact_reseller)) {
+                    $country_of_residence = null;
+                    
+                    if ($contact_reseller->person_type === 'p') {
+                        $country_of_residence = $contact_reseller->country;
+                    }
+
                     $contact_reseller = $this->client->createContact(
                         $contact_reseller->first_name . " " . $contact_reseller->last_name,
                         $contact_reseller->organization_name,
@@ -303,6 +334,7 @@ implements DomainHandlerInterface
                         $contact_reseller->fax,
                         $contact_reseller->email,
                         false,
+                        $country_of_residence,
                         'reseller'
                     );
                 }
@@ -439,9 +471,11 @@ implements DomainHandlerInterface
         }
         $result = $this->getResult();
         $natural_person = False;
+        $country_of_residence = null;
 
         if ($contact_registrant->person_type === 'p') {
             $natural_person = True;
+            $country_of_residence = $contact_registrant->country;
         }
 
         try {
@@ -461,7 +495,8 @@ implements DomainHandlerInterface
                 $phone = $contact_registrant->phone,
                 $fax = $contact_registrant->fax,
                 $email = $contact_registrant->email,
-                $natural_person = $natural_person
+                $natural_person = $natural_person,
+                $country_of_residence
             );
         } catch (Eurid_Exception $e) {
             $this->format_eurid_error_message($e);
@@ -474,9 +509,11 @@ implements DomainHandlerInterface
     public function transfer($apex_domain, $authorization_key, $contact_registrant = null)
     {
         $natural_person = False;
+        $country_of_residence = null;
 
         if ($contact_registrant->person_type === 'p') {
             $natural_person = True;
+            $country_of_residence = $contact_registrant->country;
         }
 
         try {
@@ -495,7 +532,8 @@ implements DomainHandlerInterface
                 $fax = $contact_registrant->fax,
                 $email = $contact_registrant->email,
                 $contact_type = 'registrant',
-                $natural_person = $natural_person
+                $natural_person = $natural_person,
+                $country_of_residence
             );
             $this->client->domainTransferRequest(
                 $domain = $apex_domain,
