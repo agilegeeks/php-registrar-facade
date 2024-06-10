@@ -470,11 +470,11 @@ implements DomainHandlerInterface
             return False;
         }
         $result = $this->getResult();
-        $natural_person = False;
+        $natural_person = 0;
         $country_of_residence = null;
 
         if ($contact_registrant->person_type === 'p') {
-            $natural_person = True;
+            $natural_person = 1;
             $country_of_residence = $contact_registrant->country_of_residence;
         }
 
@@ -508,11 +508,11 @@ implements DomainHandlerInterface
 
     public function transfer($apex_domain, $authorization_key, $contact_registrant = null)
     {
-        $natural_person = False;
+        $natural_person = 0;
         $country_of_residence = null;
 
         if ($contact_registrant->person_type === 'p') {
-            $natural_person = True;
+            $natural_person = 1;
             $country_of_residence = $contact_registrant->country_of_residence;
         }
 
