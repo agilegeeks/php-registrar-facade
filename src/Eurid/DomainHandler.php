@@ -191,7 +191,7 @@ implements DomainHandlerInterface
 
         if ($contact_registrant->person_type === 'p') {
             $registrant_natural_person = 1;
-            $country_of_residence = $contact_registrant->country;
+            $country_of_residence = $contact_registrant->country_of_residence;
         }
 
         try {
@@ -225,7 +225,7 @@ implements DomainHandlerInterface
                 $country_of_residence = null;
 
                 if ($contact_tech->person_type === 'p') {
-                    $country_of_residence = $contact_tech->country;
+                    $country_of_residence = $contact_tech->country_of_residence;
                 }
 
                 $contact_tech = $this->client->createContact(
@@ -253,9 +253,9 @@ implements DomainHandlerInterface
 
             if (!is_string($contact_billing)) {
                 $country_of_residence = null;
-                
+
                 if ($contact_billing->person_type === 'p') {
-                    $country_of_residence = $contact_billing->country;
+                    $country_of_residence = $contact_billing->country_of_residence;
                 }
 
                 $contact_billing = $this->client->createContact(
@@ -286,7 +286,7 @@ implements DomainHandlerInterface
                     $country_of_residence = null;
 
                     if ($contact_onsite->person_type === 'p') {
-                        $country_of_residence = $contact_onsite->country;
+                        $country_of_residence = $contact_onsite->country_of_residence;
                     }
 
                     $contact_onsite = $this->client->createContact(
@@ -315,9 +315,9 @@ implements DomainHandlerInterface
                 $contact_reseller = $extra_params['contact_reseller'];
                 if (!is_string($contact_reseller)) {
                     $country_of_residence = null;
-                    
+
                     if ($contact_reseller->person_type === 'p') {
-                        $country_of_residence = $contact_reseller->country;
+                        $country_of_residence = $contact_reseller->country_of_residence;
                     }
 
                     $contact_reseller = $this->client->createContact(
@@ -475,7 +475,7 @@ implements DomainHandlerInterface
 
         if ($contact_registrant->person_type === 'p') {
             $natural_person = True;
-            $country_of_residence = $contact_registrant->country;
+            $country_of_residence = $contact_registrant->country_of_residence;
         }
 
         try {
@@ -513,7 +513,7 @@ implements DomainHandlerInterface
 
         if ($contact_registrant->person_type === 'p') {
             $natural_person = True;
-            $country_of_residence = $contact_registrant->country;
+            $country_of_residence = $contact_registrant->country_of_residence;
         }
 
         try {
@@ -597,23 +597,30 @@ implements DomainHandlerInterface
     }
 
     public function create_nameserver($apex_domain, $nameserver, $ip)
-    { }
+    {
+    }
 
     public function update_nameserver($apex_domain, $nameserver, $ip, $old_ip)
-    { }
+    {
+    }
 
     public function delete_nameserver($apex_domain, $nameserver)
-    { }
+    {
+    }
 
     public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
-    { }
+    {
+    }
 
     public function trade_info($tid)
-    { }
+    {
+    }
 
     public function trade_confirm($tid)
-    { }
+    {
+    }
 
     public function get_whois_protect_info($apex_domain)
-    { }
+    {
+    }
 }
