@@ -242,7 +242,7 @@ implements DomainHandlerInterface
                     $contact_tech->fax,
                     $contact_tech->email,
                     false,
-                    $country_of_residence,
+                    NULL,
                     'tech'
                 );
             }
@@ -272,7 +272,7 @@ implements DomainHandlerInterface
                     $contact_billing->fax,
                     $contact_billing->email,
                     false,
-                    $country_of_residence,
+                    NULL,
                     'billing'
                 );
             }
@@ -303,7 +303,7 @@ implements DomainHandlerInterface
                         $contact_onsite->fax,
                         $contact_onsite->email,
                         $registrant_natural_person,
-                        $country_of_residence,
+                        NULL,
                         'onsite'
                     );
                 }
@@ -334,7 +334,7 @@ implements DomainHandlerInterface
                         $contact_reseller->fax,
                         $contact_reseller->email,
                         false,
-                        $country_of_residence,
+                        NULL,
                         'reseller'
                     );
                 }
