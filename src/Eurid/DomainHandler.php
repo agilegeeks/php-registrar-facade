@@ -70,7 +70,7 @@ implements DomainHandlerInterface
             $this->login();
             $response = $this->client->checkDomains($apex_domain);
             $this->setResult($response[$apex_domain]);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -80,11 +80,10 @@ implements DomainHandlerInterface
 
     public function info($apex_domain, $include_contacts = True, $include_namservers = True, $include_ds = True)
     {
-        $this->login();
-
         try {
+            $this->login();
             $domain_data = $this->client->domainInfo($domain = $apex_domain);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -135,7 +134,7 @@ implements DomainHandlerInterface
                 try {
                     $contact_data = $this->client->contactInfo($cid);
                     //var_dump($contact_data);
-                } catch (Eurid_Exception $e) {
+                } catch (\Exception $e) {
                     $this->format_eurid_error_message($e);
                     return False;
                 }
@@ -372,7 +371,7 @@ implements DomainHandlerInterface
 
             $domain_data = $this->client->domainInfo($apex_domain, False, False);
             $this->client->deleteDomain($apex_domain, $domain_data->exDate);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -382,12 +381,11 @@ implements DomainHandlerInterface
 
     public function update_nameservers($apex_domain, $nameservers = array())
     {
-        $this->login();
-
         // Domain info to get current nameservers
         try {
+            $this->login();
             $domain_data = $this->client->domainInfo($apex_domain);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -417,7 +415,7 @@ implements DomainHandlerInterface
         if (!empty($chg_ns_to_remove)) {
             try {
                 $domain_data = $this->client->updateNameservers($apex_domain, array(), $chg_ns_to_remove);
-            } catch (Eurid_Exception $e) {
+            } catch (\Exception $e) {
                 $this->format_eurid_error_message($e);
                 return False;
             }
@@ -430,7 +428,7 @@ implements DomainHandlerInterface
         // Update domain nameservers
         try {
             $domain_data = $this->client->updateNameservers($apex_domain, $ns_to_add, $ns_to_remove);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -451,7 +449,7 @@ implements DomainHandlerInterface
             $result = $this->client->domainInfo($apex_domain, $include_contacts = False, $include_namservers = False);
             $del_date = $result->exDate;
             $result = $this->client->deleteDomain($apex_domain, $del_date);
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -498,7 +496,7 @@ implements DomainHandlerInterface
                 $natural_person = $natural_person,
                 $country_of_residence
             );
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -543,7 +541,7 @@ implements DomainHandlerInterface
                 $billing = $this->config['contact_billing'],
                 $tech = $this->config['contact_tech']
             );
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return False;
         }
@@ -556,7 +554,7 @@ implements DomainHandlerInterface
         try {
             $this->login();
             $balance = $this->client->checkBalance();
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
         }
@@ -575,7 +573,7 @@ implements DomainHandlerInterface
         try {
             $this->login();
             $balance = $this->client->updateDNSSEC($apex_domain, array((object) $ds_data));
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
         }
@@ -588,7 +586,7 @@ implements DomainHandlerInterface
         try {
             $this->login();
             $balance = $this->client->updateDNSSEC($apex_domain, array(), array((object) $ds_data));
-        } catch (Eurid_Exception $e) {
+        } catch (\Exception $e) {
             $this->format_eurid_error_message($e);
             return false;
         }
