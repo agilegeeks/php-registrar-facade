@@ -1,4 +1,5 @@
 <?php
+
 namespace AgileGeeks\RegistrarFacade\Enom;
 
 use \Coreproc\Enom as Enom;
@@ -13,7 +14,7 @@ require_once(__DIR__ . '../../BaseHandler.php');
 require_once(__DIR__ . '../../ApiException.php');
 
 class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
-    implements \AgileGeeks\RegistrarFacade\DomainHandlerInterface
+implements \AgileGeeks\RegistrarFacade\DomainHandlerInterface
 {
     protected $enom = null;
     protected $domain = null;
@@ -174,12 +175,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
                 return false;
             }
 
-            $domain_name->ds_data = array(
-                'alg' => @$result->Algorithm,
-                'digest' => @$result->Digest,
-                'digest_type' => @$result->DigestType,
-                'keytag' => @$result->KeyTag
-            );
+            $domain_name->ds_data = $result;
         }
 
         $this->setResult($domain_name);
@@ -196,8 +192,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         $contact_admin = null,
         $contact_billing = null,
         $extra_params = array()
-    )
-    {
+    ) {
         list($sld, $tld) = Helpers\apex_split($apex_domain);
 
         $domain = $this->getDomainInstance();
@@ -235,7 +230,6 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         }
 
         return True;
-
     }
 
     public function purchase_service($apex_domain, $service, $period = 1)
@@ -580,7 +574,7 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
 
         $res = $res->GetDomains->GetExpiredDomains->item;
         $result = (object) array(
-            'domain_name' => $res->sld.'.'.$res->tld,
+            'domain_name' => $res->sld . '.' . $res->tld,
             'expiration_date' => $res->{'expiration-date'},
             'expiration_status' => $res->{'expiration-status'},
             'auto_renew' => $res->{'auto-renew'},
@@ -605,15 +599,9 @@ class DomainHandler extends \AgileGeeks\RegistrarFacade\BaseHandler
         return $result;
     }
 
-    public function trade($apex_domain, $authorization_key, $contact_registrant, $period)
-    {
-    }
+    public function trade($apex_domain, $authorization_key, $contact_registrant, $period) {}
 
-    public function trade_info($tid)
-    {
-    }
+    public function trade_info($tid) {}
 
-    public function trade_confirm($tid)
-    {
-    }
+    public function trade_confirm($tid) {}
 }
